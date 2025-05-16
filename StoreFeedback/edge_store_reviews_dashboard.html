@@ -150,14 +150,11 @@
         </div>
     </div>
 
-    <!-- (Feedback summary sections unchanged...) -->
-
     <div class="footer">
         <p>Microsoft Edge App Reviews Analysis | Generated on May 8, 2025</p>
     </div>
 
     <script>
-        // Chart Data Definitions
         const positiveData = {
             labels: ['Copilot', 'Rewards', 'Performance', 'Privacy', 'Search', 'UI/UX', 'Extensions', 'Tabs', 'Web Media', 'Others'],
             datasets: [{
@@ -213,9 +210,11 @@
             }
         };
 
-        // Create charts on load and scroll to top
+        // 🛠 Fix for unwanted scrolling on load
         window.addEventListener('load', function () {
-            window.scrollTo(0, 0);  // 🔧 Fix: Prevent auto-scrolling on load
+            setTimeout(() => {
+                window.scrollTo({ top: 0, behavior: 'instant' });
+            }, 300);
 
             new Chart(document.getElementById('positiveChart').getContext('2d'), {
                 type: 'pie',
