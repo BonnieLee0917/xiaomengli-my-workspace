@@ -1,0 +1,2264 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Microsoft Edge Mobile User Feedback Analysis</title>
+        <style>
+            :root {
+                --primary-color: #0078d4;
+                --secondary-color: #106ebe;
+                --background-color: #f9f9f9;
+                --card-background: #ffffff;
+                --text-color: #333333;
+                --border-color: #dddddd;
+                --positive-color: #107c10;
+                --neutral-color: #767676;
+                --negative-color: #d13438;
+            }
+            
+            body {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                line-height: 1.6;
+                color: var(--text-color);
+                background-color: var(--background-color);
+                margin: 0;
+                padding: 0;
+            }
+            
+            .container {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 20px;
+            }
+            
+            header {
+                background-color: var(--primary-color);
+                color: white;
+                padding: 20px 0;
+                margin-bottom: 30px;
+            }
+            
+            .header-content {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 0 20px;
+            }
+            
+            h1, h2, h3, h4 {
+                color: var(--primary-color);
+                margin-top: 30px;
+            }
+            
+            h1 {
+                font-size: 2.2em;
+                margin-bottom: 10px;
+            }
+            
+            h2 {
+                font-size: 1.8em;
+                border-bottom: 2px solid var(--primary-color);
+                padding-bottom: 10px;
+                margin-top: 40px;
+            }
+            
+            h3 {
+                font-size: 1.5em;
+                margin-top: 30px;
+            }
+            
+            h4 {
+                font-size: 1.2em;
+                margin-top: 20px;
+            }
+            
+            .nav-container {
+                background-color: white;
+                border-radius: 5px;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+                padding: 15px;
+                margin-bottom: 30px;
+            }
+            
+            nav ul {
+                list-style-type: none;
+                padding: 0;
+                display: flex;
+                flex-wrap: wrap;
+            }
+            
+            nav li {
+                margin-right: 20px;
+                margin-bottom: 10px;
+            }
+            
+            nav a {
+                color: var(--primary-color);
+                text-decoration: none;
+                font-weight: 500;
+                padding: 5px 10px;
+                border-radius: 3px;
+                transition: background-color 0.3s;
+            }
+            
+            nav a:hover {
+                background-color: var(--primary-color);
+                color: white;
+            }
+            
+            .overview-stats {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 20px;
+                margin: 30px 0;
+            }
+            
+            .stat-card {
+                background-color: var(--card-background);
+                border-radius: 5px;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+                padding: 20px;
+                text-align: center;
+            }
+            
+            .stat-card .value {
+                font-size: 2em;
+                font-weight: bold;
+                color: var(--primary-color);
+                margin: 10px 0;
+            }
+            
+            .stat-card .label {
+                font-size: 1em;
+                color: var(--text-color);
+            }
+            
+            .sentiment-bar {
+                display: flex;
+                height: 20px;
+                border-radius: 10px;
+                overflow: hidden;
+                margin-top: 10px;
+            }
+            
+            .sentiment-positive {
+                background-color: var(--positive-color);
+                height: 100%;
+            }
+            
+            .sentiment-neutral {
+                background-color: var(--neutral-color);
+                height: 100%;
+            }
+            
+            .sentiment-negative {
+                background-color: var(--negative-color);
+                height: 100%;
+            }
+            
+            .category-section, .subcategory-section {
+                background-color: var(--card-background);
+                border-radius: 5px;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+                padding: 20px;
+                margin-bottom: 30px;
+            }
+            
+            .subcategory-section {
+                margin-left: 20px;
+                margin-top: 20px;
+            }
+            
+            .category-stats {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 15px;
+                margin: 15px 0;
+            }
+            
+            .stat-item {
+                background-color: #f5f5f5;
+                padding: 10px;
+                border-radius: 3px;
+            }
+            
+            .stat-label {
+                font-weight: bold;
+                display: block;
+                margin-bottom: 5px;
+            }
+            
+            .examples-container {
+                margin-top: 20px;
+            }
+            
+            .example-card {
+                border-left: 4px solid var(--primary-color);
+                padding: 10px 15px;
+                margin-bottom: 15px;
+                background-color: #f5f5f5;
+                border-radius: 0 3px 3px 0;
+            }
+            
+            .example-text {
+                font-style: italic;
+                margin-bottom: 8px;
+            }
+            
+            .example-meta {
+                font-size: 0.9em;
+                color: #666;
+            }
+            
+            .count {
+                font-weight: normal;
+                font-size: 0.9em;
+                color: #666;
+            }
+            
+            .plot-container {
+                background-color: var(--card-background);
+                border-radius: 5px;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+                padding: 20px;
+                margin-bottom: 30px;
+                text-align: center;
+            }
+            
+            .plot-image {
+                max-width: 100%;
+                height: auto;
+                margin: 10px 0;
+            }
+            
+            .source {
+                color: var(--primary-color);
+            }
+            
+            footer {
+                background-color: var(--primary-color);
+                color: white;
+                text-align: center;
+                padding: 20px 0;
+                margin-top: 50px;
+            }
+            
+            @media (max-width: 768px) {
+                .category-stats {
+                    grid-template-columns: 1fr;
+                }
+                
+                .overview-stats {
+                    grid-template-columns: 1fr;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <div class="header-content">
+                <h1>Microsoft Edge Mobile User Feedback Analysis</h1>
+                <p>Analysis period: May 7 - May 27, 2025</p>
+            </div>
+        </header>
+        
+        <div class="container">
+            <section class="nav-container">
+                <h2>Navigation</h2>
+                <nav>
+                    <ul>
+                        <li><a href="#executive-summary">Executive Summary</a></li>
+                        <li><a href="#methodology">Methodology</a></li>
+                        <li><a href="#overall-findings">Overall Findings</a></li>
+                        <li><a href="#visualizations">Visualizations</a></li>
+                        <li><a href="#category-analysis">Category Analysis</a></li>
+                        <li><a href="#extensions">Extensions</a></li><li><a href="#features">Features</a></li><li><a href="#media-handling">Media Handling</a></li><li><a href="#pdf-&-documents">PDF & Documents</a></li><li><a href="#performance">Performance</a></li><li><a href="#privacy-&-security">Privacy & Security</a></li><li><a href="#search-experience">Search Experience</a></li><li><a href="#sync-&-integration">Sync & Integration</a></li><li><a href="#user-interface">User Interface</a></li>
+                        <li><a href="#recommendations">Recommendations</a></li>
+                    </ul>
+                </nav>
+            </section>
+            
+            <section id="executive-summary">
+                <h2>Executive Summary</h2>
+                <p>This report analyzes user feedback for Microsoft Edge Mobile collected between May 7-27, 2025. The data was gathered from multiple sources including Unwrap (social media monitoring), Google Play Store reviews, and iOS App Store reviews.</p>
+                <p>A total of <strong>1497</strong> pieces of feedback were analyzed across all channels. The analysis focused on categorizing feedback, sentiment analysis, identifying feature requests and bug reports, and extracting actionable insights to improve the Edge Mobile experience.</p>
+                
+                <div class="overview-stats">
+                    <div class="stat-card">
+                        <div class="label">Total Feedback</div>
+                        <div class="value">1497</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="label">Sentiment Distribution</div>
+                        <div class="value">
+                            <span style="color: green;">22.7%</span> / 
+                            <span style="color: gray;">68.5%</span> / 
+                            <span style="color: red;">8.8%</span>
+                        </div>
+                        <div class="sentiment-bar">
+                            <div class="sentiment-positive" style="width: 22.712090848363392%;"></div>
+                            <div class="sentiment-neutral" style="width: 68.47027388109552%;"></div>
+                            <div class="sentiment-negative" style="width: 8.817635270541082%;"></div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="label">Feature Requests</div>
+                        <div class="value">83</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="label">Bug Reports</div>
+                        <div class="value">116</div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="methodology">
+                <h2>Methodology</h2>
+                <p>The analysis followed a comprehensive approach to extract meaningful insights from user feedback:</p>
+                <ol>
+                    <li><strong>Data Collection:</strong> Feedback was collected from Unwrap social media monitoring (Reddit, Twitter), Google Play Store reviews, and iOS App Store reviews for the period May 7-27, 2025.</li>
+                    <li><strong>Data Processing:</strong> All feedback was cleaned and preprocessed to remove irrelevant information and standardize the format.</li>
+                    <li><strong>Categorization:</strong> Feedback was categorized into main categories and subcategories based on content analysis.</li>
+                    <li><strong>Sentiment Analysis:</strong> A 5-point sentiment scale was applied to each piece of feedback to identify positive, neutral, and negative sentiments.</li>
+                    <li><strong>Feature Request & Bug Report Identification:</strong> Feedback was analyzed to identify feature requests and bug reports.</li>
+                    <li><strong>Trend Analysis:</strong> Patterns and trends were identified across different feedback sources and categories.</li>
+                    <li><strong>Visualization:</strong> Key findings were visualized to provide clear insights.</li>
+                </ol>
+                <p><strong>Data Sources:</strong></p>
+                <ul>
+                    <li>Google Play App Store: 1299</li><li>iOS App Store: 143</li><li>Unwrap: 55</li>
+                </ul>
+            </section>
+            
+            <section id="overall-findings">
+                <h2>Overall Findings</h2>
+                <p>The analysis of user feedback for Microsoft Edge Mobile revealed several key insights:</p>
+                <ul>
+                    <li><strong>Primary Feedback Categories:</strong> The most discussed aspects of Edge Mobile were Search Experience, User Interface.</li>
+                    <li><strong>Sentiment Overview:</strong> Overall, 22.7% of the feedback was positive, 68.5% was neutral, and 8.8% was negative.</li>
+                    <li><strong>Feature Requests:</strong> 83 pieces of feedback contained feature requests, primarily focused on Features, User Interface.</li>
+                    <li><strong>Bug Reports:</strong> 116 pieces of feedback reported bugs or issues, mainly related to Performance.</li>
+                    <li><strong>Platform Differences:</strong> Feedback from iOS users differed from Android users in some key areas, particularly regarding .</li>
+                </ul>
+            </section>
+            
+            <section id="visualizations">
+                <h2>Visualizations</h2>
+                <div class="plots-container">
+                    
+        <div class="plot-container">
+            <h4>Distribution of Feedback by Category</h4>
+            <img src="images/category_distribution.png" alt="Distribution of Feedback by Category" class="plot-image">
+        </div>
+        
+        <div class="plot-container">
+            <h4>Sentiment Distribution</h4>
+            <img src="images/sentiment_distribution.png" alt="Sentiment Distribution" class="plot-image">
+        </div>
+        
+        <div class="plot-container">
+            <h4>Sentiment Distribution by Category</h4>
+            <img src="images/sentiment_by_category.png" alt="Sentiment Distribution by Category" class="plot-image">
+        </div>
+        
+        <div class="plot-container">
+            <h4>Feedback Distribution by Source</h4>
+            <img src="images/source_distribution.png" alt="Feedback Distribution by Source" class="plot-image">
+        </div>
+        
+        <div class="plot-container">
+            <h4>Distribution of Feedback Types</h4>
+            <img src="images/feedback_type_distribution.png" alt="Distribution of Feedback Types" class="plot-image">
+        </div>
+        
+        <div class="plot-container">
+            <h4>Top 10 Subcategories</h4>
+            <img src="images/top_subcategories.png" alt="Top 10 Subcategories" class="plot-image">
+        </div>
+        
+        <div class="plot-container">
+            <h4>Distribution of 5-Point Sentiment Scores</h4>
+            <img src="images/sentiment_score_distribution.png" alt="Distribution of 5-Point Sentiment Scores" class="plot-image">
+        </div>
+        
+        <div class="plot-container">
+            <h4>Word Cloud of User Feedback</h4>
+            <img src="images/feedback_wordcloud.png" alt="Word Cloud of User Feedback" class="plot-image">
+        </div>
+        
+                </div>
+            </section>
+            
+            <section id="category-analysis">
+                <h2>Category Analysis</h2>
+                
+        <div class="category-section" id="extensions">
+            <h3>Extensions</h3>
+            <div class="category-stats">
+                <div class="stat-item">
+                    <span class="stat-label">Total Feedback:</span>
+                    <span class="stat-value">23</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Sentiment:</span>
+                    <span class="stat-value">
+                        <span style="color: green;">17.4% Positive</span> | 
+                        <span style="color: gray;">69.6% Neutral</span> | 
+                        <span style="color: red;">13.0% Negative</span>
+                    </span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Feature Requests:</span>
+                    <span class="stat-value">5</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Bug Reports:</span>
+                    <span class="stat-value">1</span>
+                </div>
+            </div>
+            <div class="examples-container">
+                <h4>Top Examples:</h4>
+                
+            <div class="example-card">
+                <div class="example-text">"Getting Better Every Update Each update brings nice little updates from moving the address bar to adding Adblocker. Wish we could add extensions like Safari. When is it getting grouping tabs?"</div>
+                <div class="example-meta">
+                    <span class="source">iOS App Store</span> | 
+                    <span class="date">2025-05-08</span> | 
+                    <span class="sentiment" style="color: green;">Positive</span>
+                </div>
+            </div>
+            
+            <div class="example-card">
+                <div class="example-text">"There you go new extensions, thanks! Always the best and they did it check the bottom address bar 10 5 great and new extensions like adblock"</div>
+                <div class="example-meta">
+                    <span class="source">Google Play App Store</span> | 
+                    <span class="date">2025-05-24</span> | 
+                    <span class="sentiment" style="color: green;">Positive</span>
+                </div>
+            </div>
+            
+            <div class="example-card">
+                <div class="example-text">"Extension crashes all the time even with the flag to restart it enabled, making the browser unusable. Edit I d say all, but mine are uBlock and Violentmonkey. Also copilot summarise always gives an error and asks for a retry"</div>
+                <div class="example-meta">
+                    <span class="source">Google Play App Store</span> | 
+                    <span class="date">2025-05-23</span> | 
+                    <span class="sentiment" style="color: red;">Negative</span>
+                </div>
+            </div>
+            
+            <div class="example-card">
+                <div class="example-text">"Hi Edge Team, I love using Edge on Android, but the current Adblock Plus doesn t block most ads and lacks effectiveness. Because of that, I had to switch to Brave, which offers a much better experience with its Brave Shield Up system. Please consider adding stronger built in ad blocking or support for extensions like uBlock Origin. This would make Edge more appealing for privacy conscious users. Thanks!"</div>
+                <div class="example-meta">
+                    <span class="source">Google Play App Store</span> | 
+                    <span class="date">2025-05-22</span> | 
+                    <span class="sentiment" style="color: green;">Positive</span>
+                </div>
+            </div>
+            
+            <div class="example-card">
+                <div class="example-text">"Decent browser, but it doesn t have ublock origin as an extension, so it s largely useless."</div>
+                <div class="example-meta">
+                    <span class="source">Google Play App Store</span> | 
+                    <span class="date">2025-05-21</span> | 
+                    <span class="sentiment" style="color: red;">Negative</span>
+                </div>
+            </div>
+            
+            </div>
+            <div class="subcategories-container">
+                <h4>Subcategories:</h4>
+                
+            <div class="subcategory-section">
+                <h4>Ad Blocker Extensions <span class="count">(18, 78.3%)</span></h4>
+                <div class="examples-container">
+                    
+                <div class="example-card">
+                    <div class="example-text">"Getting Better Every Update Each update brings nice little updates from moving the address bar to adding Adblocker. Wish we could add extensions like Safari. When is it getting grouping tabs?"</div>
+                    <div class="example-meta">
+                        <span class="source">iOS App Store</span> | 
+                        <span class="date">2025-05-08</span> | 
+                        <span class="sentiment" style="color: green;">Positive</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"There you go new extensions, thanks! Always the best and they did it check the bottom address bar 10 5 great and new extensions like adblock"</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-24</span> | 
+                        <span class="sentiment" style="color: green;">Positive</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"Extension crashes all the time even with the flag to restart it enabled, making the browser unusable. Edit I d say all, but mine are uBlock and Violentmonkey. Also copilot summarise always gives an error and asks for a retry"</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-23</span> | 
+                        <span class="sentiment" style="color: red;">Negative</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"Hi Edge Team, I love using Edge on Android, but the current Adblock Plus doesn t block most ads and lacks effectiveness. Because of that, I had to switch to Brave, which offers a much better experience with its Brave Shield Up system. Please consider adding stronger built in ad blocking or support for extensions like uBlock Origin. This would make Edge more appealing for privacy conscious users. Thanks!"</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-22</span> | 
+                        <span class="sentiment" style="color: green;">Positive</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"Decent browser, but it doesn t have ublock origin as an extension, so it s largely useless."</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-21</span> | 
+                        <span class="sentiment" style="color: red;">Negative</span>
+                    </div>
+                </div>
+                
+                </div>
+            </div>
+            
+            <div class="subcategory-section">
+                <h4>Extension Availability <span class="count">(4, 17.4%)</span></h4>
+                <div class="examples-container">
+                    
+                <div class="example-card">
+                    <div class="example-text">"very nice browser just need adblock improved."</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-13</span> | 
+                        <span class="sentiment" style="color: green;">Positive</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"We need uBlock Origin or uBlock Origin Lite support for Edge Mobile extensions.."</div>
+                    <div class="example-meta">
+                        <span class="source">Unwrap</span> | 
+                        <span class="date">2025-05-11</span> | 
+                        <span class="sentiment" style="color: gray;">Neutral</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"uBlock is available!"</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-24</span> | 
+                        <span class="sentiment" style="color: gray;">Neutral</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"We need uBlock Origin or uBlock Origin Lite support for Edge Mobile extensions.."</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-11</span> | 
+                        <span class="sentiment" style="color: gray;">Neutral</span>
+                    </div>
+                </div>
+                
+                </div>
+            </div>
+            
+            </div>
+        </div>
+        
+        <div class="category-section" id="features">
+            <h3>Features</h3>
+            <div class="category-stats">
+                <div class="stat-item">
+                    <span class="stat-label">Total Feedback:</span>
+                    <span class="stat-value">79</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Sentiment:</span>
+                    <span class="stat-value">
+                        <span style="color: green;">38.0% Positive</span> | 
+                        <span style="color: gray;">45.6% Neutral</span> | 
+                        <span style="color: red;">16.5% Negative</span>
+                    </span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Feature Requests:</span>
+                    <span class="stat-value">22</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Bug Reports:</span>
+                    <span class="stat-value">13</span>
+                </div>
+            </div>
+            <div class="examples-container">
+                <h4>Top Examples:</h4>
+                
+            <div class="example-card">
+                <div class="example-text">"Delete the Download history is a pain It is a pain to use MS Edge. There is no option to clear the long list in Downloads. The only option is click the three dots, then delete them one at a time. Can t believe software giant like Microsoft makes app so dumb like this."</div>
+                <div class="example-meta">
+                    <span class="source">iOS App Store</span> | 
+                    <span class="date">2025-05-08</span> | 
+                    <span class="sentiment" style="color: green;">Positive</span>
+                </div>
+            </div>
+            
+            <div class="example-card">
+                <div class="example-text">"I love it s unique safety features and beautiful unique style, then again it s from Microsoft."</div>
+                <div class="example-meta">
+                    <span class="source">Google Play App Store</span> | 
+                    <span class="date">2025-05-09</span> | 
+                    <span class="sentiment" style="color: green;">Positive</span>
+                </div>
+            </div>
+            
+            <div class="example-card">
+                <div class="example-text">"Excellent functionality, fast and secure! It also does a good job removing most of the distracting advertising."</div>
+                <div class="example-meta">
+                    <span class="source">Google Play App Store</span> | 
+                    <span class="date">2025-05-08</span> | 
+                    <span class="sentiment" style="color: green;">Positive</span>
+                </div>
+            </div>
+            
+            <div class="example-card">
+                <div class="example-text">"Microsoft Edge has added a new LAYER ³ to my understanding of development. It s smooth tools allow functional access to unique webkits. Loving the Microsoft suite and edge is as sharp as a carpenters chisel."</div>
+                <div class="example-meta">
+                    <span class="source">Google Play App Store</span> | 
+                    <span class="date">2025-05-08</span> | 
+                    <span class="sentiment" style="color: green;">Positive</span>
+                </div>
+            </div>
+            
+            <div class="example-card">
+                <div class="example-text">"Points redeem options are very less. bring more options like Flipkart, Amazon."</div>
+                <div class="example-meta">
+                    <span class="source">Google Play App Store</span> | 
+                    <span class="date">2025-05-18</span> | 
+                    <span class="sentiment" style="color: green;">Positive</span>
+                </div>
+            </div>
+            
+            </div>
+            <div class="subcategories-container">
+                <h4>Subcategories:</h4>
+                
+            <div class="subcategory-section">
+                <h4>Broken Features <span class="count">(7, 8.9%)</span></h4>
+                <div class="examples-container">
+                    
+                <div class="example-card">
+                    <div class="example-text">"Since the last Edge update, this feature seems to be broken. Sometimes it hides, sometimes it does not. Microsoft has removed the feedback option from the app, so Iam posting this here"</div>
+                    <div class="example-meta">
+                        <span class="source">Unwrap (<a href='https://www.reddit.com/r/MicrosoftEdge/comments/1krejl5/' target='_blank'>Source</a>)</span> | 
+                        <span class="date">2025-05-20</span> | 
+                        <span class="sentiment" style="color: red;">Negative</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"My Edge browser on Android is, without fail, logging me out of everything every 2 3 weeks. It s honestly becoming a dealbreaker for me after using Edge for 2 years. I ve gone through all of my settings without luck. Does anyone know how to fix this?"</div>
+                    <div class="example-meta">
+                        <span class="source">Unwrap (<a href='https://www.reddit.com/r/MicrosoftEdge/comments/1khzfzi/' target='_blank'>Source</a>)</span> | 
+                        <span class="date">2025-05-08</span> | 
+                        <span class="sentiment" style="color: red;">Negative</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"The new option for moving the address bar to the bottom is nice to see finally. However the auto hide function when scrolling is broken and incredibly annoying as it is right now. When scrolling a page it constantly pops up and down, never actually staying hidden while scrolling. Seems to be popping up because the site is loading new data."</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-24</span> | 
+                        <span class="sentiment" style="color: red;">Negative</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"App is completely broken on Surface Duo 2, setting inaccessible, address bar gone, the app is no longer usable on a phone made by Microsoft. This is poor form and hugely disappointing for a device that cost me 2700. Where is the fix?"</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-09</span> | 
+                        <span class="sentiment" style="color: red;">Negative</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"Microsoft Edge A Frustrating and Glitchy Experience Microsoft Edge aims to be a sleek, secure browser, but in reality, it often feels like an obstacle rather than an asset. Its usability issues, lack of compatibility, and frustrating authentication process make it difficult to recommend. Password Creation Issues Signing into a new app and creating a password should be simple, but Edge unnecessarily complicates the process. The forced reliance on Microsoft Authenticator especially with its impending retirement makes this even worse. Users shouldn t have to jump through extra hoops just to access their accounts. Glitches Site Incompatibilities Edge s struggles extend beyond just logins. Websites like Synapse Mobility and Religipax frequently fail to load or function correctly, forcing users to troubleshoot or switch browsers entirely. Whether it s rendering problems, slow response times, or broken features, Edge feels unreliable for anything beyond casual browsing. Overall Verdict Rather than delivering efficiency and convenience, Microsoft Edge often feels like a frustrating puzzle that users must constantly solve. With so many alternative browsers offering smoother performance and better compatibility, it s hard to justify sticking with Edge unless forced by workplace requirements. Until Microsoft addresses these persistent issues, Edge remains more of a liability than a useful tool."</div>
+                    <div class="example-meta">
+                        <span class="source">iOS App Store</span> | 
+                        <span class="date">2025-05-21</span> | 
+                        <span class="sentiment" style="color: red;">Negative</span>
+                    </div>
+                </div>
+                
+                </div>
+            </div>
+            
+            <div class="subcategory-section">
+                <h4>Feature Requests <span class="count">(10, 12.7%)</span></h4>
+                <div class="examples-container">
+                    
+                <div class="example-card">
+                    <div class="example-text">"Latest update have made the app unusable. Address bar is gone and so is the Settings. Happens with dark and light them. Also on Edge Dev beta and canaray. Seems to have hit Surface Duo users the hardest."</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-20</span> | 
+                        <span class="sentiment" style="color: red;">Negative</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"guys I love yur app soo much, I use edge on ma pc and would love to also use it on ma android device, have you guys considered adding chrome extensions support, that would really bump up the functionality of this browser"</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-20</span> | 
+                        <span class="sentiment" style="color: green;">Positive</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"I wish they would also add the the best features of Kiwi.. please add the Desktop tab switcher, also the Developer option. Please remove those recommended extension it looks like Edge becoming a bloatware."</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-19</span> | 
+                        <span class="sentiment" style="color: green;">Positive</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"it is an excellent browser. i love it. but if you add background media playing feature like brave browser then it will be more amazing."</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-18</span> | 
+                        <span class="sentiment" style="color: green;">Positive</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"app is okay. it had some performance issues with some websites but it s okay now. but the bottom menu bar is terrible why do I have to use it? please add an option to disable it and make the menu bar functions in the top search bar. looking forward for a response and looking forward for an update. thanks"</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-14</span> | 
+                        <span class="sentiment" style="color: red;">Negative</span>
+                    </div>
+                </div>
+                
+                </div>
+            </div>
+            
+            <div class="subcategory-section">
+                <h4>Missing Features <span class="count">(12, 15.2%)</span></h4>
+                <div class="examples-container">
+                    
+                <div class="example-card">
+                    <div class="example-text">"Great, but I wish there was a night mode for web pages, where the white portions of webpages are black and the text is white."</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-25</span> | 
+                        <span class="sentiment" style="color: green;">Positive</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"A good browser, but its extension support is too limited, it needs to support chrome extensions"</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-21</span> | 
+                        <span class="sentiment" style="color: green;">Positive</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"Smooth Fast Browser. But I don t use my any SENSITIVE ACCOUNT like Banking , trading on this browser because lack of Good Extension Like Ublock Origin Adguard..Also please add features external download Manager"</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-16</span> | 
+                        <span class="sentiment" style="color: green;">Positive</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"Microsoft Edge. Google. Gemini, Opera. Mozilla. Apple. Samsung. Adobe. All have amazing Functions. My mental health needs a clear, easy to navigate environment. I use them all to create my world. Do You! with Edge."</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-15</span> | 
+                        <span class="sentiment" style="color: green;">Positive</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"The browser is a complete package in terms of functionality. It supports a lot of useful extensions including uBlock Origin yes, there s a workaround which you can find in Reddit has built in translator has baked in AI capabilities sync feature and even a refreshing home screen which shows a new wallpaper everyday! It just needs some UI refinements for better aesthetic feel. EDIT Thank you so much for including the UI refinements I requested for!!!!"</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-14</span> | 
+                        <span class="sentiment" style="color: green;">Positive</span>
+                    </div>
+                </div>
+                
+                </div>
+            </div>
+            
+            <div class="subcategory-section">
+                <h4>Settings & Customization <span class="count">(18, 22.8%)</span></h4>
+                <div class="examples-container">
+                    
+                <div class="example-card">
+                    <div class="example-text">"Points redeem options are very less. bring more options like Flipkart, Amazon."</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-18</span> | 
+                        <span class="sentiment" style="color: green;">Positive</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"This app does not have any of the common appearance and layout customization options that are available for all its competitors, such as toolbar location, amoled theme and general layout customization. This app boasts useless features such as copilot while not having even the most basic functionalities of its competitors."</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-19</span> | 
+                        <span class="sentiment" style="color: red;">Negative</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"it s a good browser. unfortunately it s run and owned by M so they just randomly turn on notifications for their news and such so they get ad revenue so you gotta go back into settings again to disable it."</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-07</span> | 
+                        <span class="sentiment" style="color: green;">Positive</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"I prejudged it never gave it the time of day, I always just stuck with Google Chrome. Just recently I decided to give it a try because i was having issues with Chrome. Now I m so happy I did. Its an amazing browser! Its very customizable has a lot of cool menu options already pre installed. It has way more features than Chrome offers. I would choose it anyday over Google Chrome. Make the switch, you won t regret it! It s having issues syncing the web browser app, like passwords and data."</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-11</span> | 
+                        <span class="sentiment" style="color: green;">Positive</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"Edge sucks. I m confused to why u can t sign forms in edge like Firefox on sites. Edge doesn t seem to block the ads like Firefox does when going to certain sites. I m confused to why when turning on ad block it doesn t block the ads on sites u visit. Why doesn t Edge have were u can alphabetize your bookmarks and passwords like Firefox does. Why can t u import passwords from Firefox to edge it only gives u the option to import from chrome."</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-12</span> | 
+                        <span class="sentiment" style="color: green;">Positive</span>
+                    </div>
+                </div>
+                
+                </div>
+            </div>
+            
+            </div>
+        </div>
+        
+        <div class="category-section" id="media-handling">
+            <h3>Media Handling</h3>
+            <div class="category-stats">
+                <div class="stat-item">
+                    <span class="stat-label">Total Feedback:</span>
+                    <span class="stat-value">20</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Sentiment:</span>
+                    <span class="stat-value">
+                        <span style="color: green;">10.0% Positive</span> | 
+                        <span style="color: gray;">40.0% Neutral</span> | 
+                        <span style="color: red;">50.0% Negative</span>
+                    </span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Feature Requests:</span>
+                    <span class="stat-value">3</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Bug Reports:</span>
+                    <span class="stat-value">7</span>
+                </div>
+            </div>
+            <div class="examples-container">
+                <h4>Top Examples:</h4>
+                
+            <div class="example-card">
+                <div class="example-text">"Edge Mobile will constantly show the wrong favicon next to a website. Normally it chooses it at random from whatever tabs I had open but it seems to have favored this one. It seems to be using it as a placeholder image, I have tried clearing cache and redownloading the app. The favicon in question is not in my search history so I don t understand why it keeps pulling it."</div>
+                <div class="example-meta">
+                    <span class="source">Unwrap (<a href='https://www.reddit.com/r/MicrosoftEdge/comments/1krpjwe/' target='_blank'>Source</a>)</span> | 
+                    <span class="date">2025-05-21</span> | 
+                    <span class="sentiment" style="color: red;">Negative</span>
+                </div>
+            </div>
+            
+            <div class="example-card">
+                <div class="example-text">"The browser that does everything others cannot, a must have. If only it could have background playback as in Brave, I d never complain"</div>
+                <div class="example-meta">
+                    <span class="source">Google Play App Store</span> | 
+                    <span class="date">2025-05-24</span> | 
+                    <span class="sentiment" style="color: red;">Negative</span>
+                </div>
+            </div>
+            
+            <div class="example-card">
+                <div class="example-text">"Add Picture in picture Google extension or any pip extension that forces any video to pip please! this extension really makes watching video on phone 10 10. also the group tab is so annoying to navigate. can t add a tab for the group specifically, can t browse the group tab alone and always sent me into all tabs. and it s kinda tedious to search the group tabs. this needs fixing asap"</div>
+                <div class="example-meta">
+                    <span class="source">Google Play App Store</span> | 
+                    <span class="date">2025-05-22</span> | 
+                    <span class="sentiment" style="color: red;">Negative</span>
+                </div>
+            </div>
+            
+            <div class="example-card">
+                <div class="example-text">"Videos never play Every time I try to play videos from bing.com they start then stop. I play the same videos in Safari and no issues."</div>
+                <div class="example-meta">
+                    <span class="source">iOS App Store</span> | 
+                    <span class="date">2025-05-08</span> | 
+                    <span class="sentiment" style="color: red;">Negative</span>
+                </div>
+            </div>
+            
+            <div class="example-card">
+                <div class="example-text">"The app is great, it has many good points, what I especially like is the auto translation that Edge has on YouTube. I noticed that on some videos this option is not very good and that it skips certain words or every other sentence, please fix that."</div>
+                <div class="example-meta">
+                    <span class="source">Google Play App Store</span> | 
+                    <span class="date">2025-05-22</span> | 
+                    <span class="sentiment" style="color: green;">Positive</span>
+                </div>
+            </div>
+            
+            </div>
+            <div class="subcategories-container">
+                <h4>Subcategories:</h4>
+                
+            <div class="subcategory-section">
+                <h4>Image Viewing <span class="count">(1, 5.0%)</span></h4>
+                <div class="examples-container">
+                    
+                <div class="example-card">
+                    <div class="example-text">"Edge Mobile will constantly show the wrong favicon next to a website. Normally it chooses it at random from whatever tabs I had open but it seems to have favored this one. It seems to be using it as a placeholder image, I have tried clearing cache and redownloading the app. The favicon in question is not in my search history so I don t understand why it keeps pulling it."</div>
+                    <div class="example-meta">
+                        <span class="source">Unwrap (<a href='https://www.reddit.com/r/MicrosoftEdge/comments/1krpjwe/' target='_blank'>Source</a>)</span> | 
+                        <span class="date">2025-05-21</span> | 
+                        <span class="sentiment" style="color: red;">Negative</span>
+                    </div>
+                </div>
+                
+                </div>
+            </div>
+            
+            <div class="subcategory-section">
+                <h4>Video Playback <span class="count">(17, 85.0%)</span></h4>
+                <div class="examples-container">
+                    
+                <div class="example-card">
+                    <div class="example-text">"Video support seems to have fallen off across various websites. I can still watch videos on other browsers such as the default Samsung Internet browser , but they show a broken file symbol on Edge. Really disappointing."</div>
+                    <div class="example-meta">
+                        <span class="source">Unwrap</span> | 
+                        <span class="date">2025-05-07</span> | 
+                        <span class="sentiment" style="color: red;">Negative</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"Add Picture in picture Google extension or any pip extension that forces any video to pip please! this extension really makes watching video on phone 10 10. also the group tab is so annoying to navigate. can t add a tab for the group specifically, can t browse the group tab alone and always sent me into all tabs. and it s kinda tedious to search the group tabs. this needs fixing asap"</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-22</span> | 
+                        <span class="sentiment" style="color: red;">Negative</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"Videos never play Every time I try to play videos from bing.com they start then stop. I play the same videos in Safari and no issues."</div>
+                    <div class="example-meta">
+                        <span class="source">iOS App Store</span> | 
+                        <span class="date">2025-05-08</span> | 
+                        <span class="sentiment" style="color: red;">Negative</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"The app is great, it has many good points, what I especially like is the auto translation that Edge has on YouTube. I noticed that on some videos this option is not very good and that it skips certain words or every other sentence, please fix that."</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-22</span> | 
+                        <span class="sentiment" style="color: green;">Positive</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"Video support seems to have fallen off across various websites. I can still watch videos on other browsers such as the default Samsung Internet browser , but they show a broken file symbol on Edge. Really disappointing."</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-07</span> | 
+                        <span class="sentiment" style="color: red;">Negative</span>
+                    </div>
+                </div>
+                
+                </div>
+            </div>
+            
+            </div>
+        </div>
+        
+        <div class="category-section" id="pdf-&-documents">
+            <h3>PDF & Documents</h3>
+            <div class="category-stats">
+                <div class="stat-item">
+                    <span class="stat-label">Total Feedback:</span>
+                    <span class="stat-value">22</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Sentiment:</span>
+                    <span class="stat-value">
+                        <span style="color: green;">27.3% Positive</span> | 
+                        <span style="color: gray;">45.5% Neutral</span> | 
+                        <span style="color: red;">27.3% Negative</span>
+                    </span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Feature Requests:</span>
+                    <span class="stat-value">5</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Bug Reports:</span>
+                    <span class="stat-value">7</span>
+                </div>
+            </div>
+            <div class="examples-container">
+                <h4>Top Examples:</h4>
+                
+            <div class="example-card">
+                <div class="example-text">"I ve made a very small site gist.github.com... to reproduce this. Move the index.html... into a templates folder if you want to run it only dependency is Flask, I suggest using uv docs.astral.sh... to download python and add Flask. So, here s the issue. There a PDF that s only generated when sending a POST verb to a specific address. By using a web debugging proxy such as Fiddler www.getfiddler.com... mitmproxy mitmproxy.org... Charles Proxy www.charlesproxy.com... etc Edge for Android and only Edge for Android seems to do a POST request, and then consequently ignore it and do two GET requests for the same URL. For example 1. POST pdfbug.example.com... 2. GET pdfbug.example.com... 3. GET pdfbug.example.com... Edge seems to disregard the first POST completely, and rely on the next GET requests. Of course, since in the case of the sample web site the PDF is only sent when using POST, no PDF is actually downloaded or displayed. And in my production site which triggerred this whole investigation , the PDF file is only generated when the browser is making a POST request anyway. My sample web site works fine if you select attach so that the file is forcefully downloaded as an attachment, instead of being displayd inline . And to verify that this is indeed a problem with Microsoft Edge for Android, I tried it with other browsers of course , and on desktop works fine and from iOS works fine as well . Another workaround was to disable the Directly view PDF in Tab V2 by going to the address edge flags edge new pdf viewer v2 edge flags edge new pdf viewer v2 and disabling that feature. Of course I may be wrong in my assessment, but I think I ve covered all the bases. Does anyone else have any similar experience? Can anyone else confirm my findings?"</div>
+                <div class="example-meta">
+                    <span class="source">Unwrap (<a href='https://www.reddit.com/r/MicrosoftEdge/comments/1ktjof5/' target='_blank'>Source</a>)</span> | 
+                    <span class="date">2025-05-23</span> | 
+                    <span class="sentiment" style="color: red;">Negative</span>
+                </div>
+            </div>
+            
+            <div class="example-card">
+                <div class="example-text">"so far so good just downloaded it for the first time on my phone."</div>
+                <div class="example-meta">
+                    <span class="source">Google Play App Store</span> | 
+                    <span class="date">2025-05-17</span> | 
+                    <span class="sentiment" style="color: green;">Positive</span>
+                </div>
+            </div>
+            
+            <div class="example-card">
+                <div class="example-text">"Think for the reviews good up up include upgrudtion"</div>
+                <div class="example-meta">
+                    <span class="source">Google Play App Store</span> | 
+                    <span class="date">2025-05-08</span> | 
+                    <span class="sentiment" style="color: green;">Positive</span>
+                </div>
+            </div>
+            
+            <div class="example-card">
+                <div class="example-text">"worst app ever don t download it"</div>
+                <div class="example-meta">
+                    <span class="source">Google Play App Store</span> | 
+                    <span class="date">2025-05-09</span> | 
+                    <span class="sentiment" style="color: red;">Negative</span>
+                </div>
+            </div>
+            
+            <div class="example-card">
+                <div class="example-text">"even the latest version still hasn t resolved the EDGE titlebar issue on corporate profiles. this hides the top portion of webpages and even blocks the tab view panel so you can t close the top two tabs anymore as the x is obscured by the edge bar. this happens when you unlock the app..go away for a while then open it up again..or switch to personal profile then straight back again. been the same since the 120 version or before that ..no improvement"</div>
+                <div class="example-meta">
+                    <span class="source">Google Play App Store</span> | 
+                    <span class="date">2025-05-25</span> | 
+                    <span class="sentiment" style="color: red;">Negative</span>
+                </div>
+            </div>
+            
+            </div>
+            <div class="subcategories-container">
+                <h4>Subcategories:</h4>
+                
+            <div class="subcategory-section">
+                <h4>Download Issues <span class="count">(8, 36.4%)</span></h4>
+                <div class="examples-container">
+                    
+                <div class="example-card">
+                    <div class="example-text">"Tried your app again, same thing, but I think I read in your Privacy Policy you may train AI models by me using your app, don t know if it s your app or not, has a hard time searching with your app, looks like a man would get paid to train models, what I m having a hard time with now is money, and in response to your response to what I said about Microsoft 365 appearing on my phone wanting to delete all my files and photos, I didn t download the app, it appeared on my phone, maybe we can talk"</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-20</span> | 
+                        <span class="sentiment" style="color: green;">Positive</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"so far so good just downloaded it for the first time on my phone."</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-17</span> | 
+                        <span class="sentiment" style="color: green;">Positive</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"your browser don t resume download.fix the problem"</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-16</span> | 
+                        <span class="sentiment" style="color: red;">Negative</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"Downloads disappear at frustrating 99 Download of this file is prevented as the file exists error. Bloated app. Pdf files cannot be downloaded but opened. Images cannot be downloaded."</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-13</span> | 
+                        <span class="sentiment" style="color: red;">Negative</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"worst app ever don t download it"</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-09</span> | 
+                        <span class="sentiment" style="color: red;">Negative</span>
+                    </div>
+                </div>
+                
+                </div>
+            </div>
+            
+            <div class="subcategory-section">
+                <h4>PDF Editing <span class="count">(1, 4.5%)</span></h4>
+                <div class="examples-container">
+                    
+                <div class="example-card">
+                    <div class="example-text">"Je ne peux plus écrire, la voix parle .... c est l horreur!!!!!! Comment faire???? Comment retrouver Edge d avant ???? Bon j ai tout désinstallé. quel bazar !!!!"</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-20</span> | 
+                        <span class="sentiment" style="color: gray;">Neutral</span>
+                    </div>
+                </div>
+                
+                </div>
+            </div>
+            
+            <div class="subcategory-section">
+                <h4>PDF Viewing <span class="count">(8, 36.4%)</span></h4>
+                <div class="examples-container">
+                    
+                <div class="example-card">
+                    <div class="example-text">"I ve made a very small site gist.github.com... to reproduce this. Move the index.html... into a templates folder if you want to run it only dependency is Flask, I suggest using uv docs.astral.sh... to download python and add Flask. So, here s the issue. There a PDF that s only generated when sending a POST verb to a specific address. By using a web debugging proxy such as Fiddler www.getfiddler.com... mitmproxy mitmproxy.org... Charles Proxy www.charlesproxy.com... etc Edge for Android and only Edge for Android seems to do a POST request, and then consequently ignore it and do two GET requests for the same URL. For example 1. POST pdfbug.example.com... 2. GET pdfbug.example.com... 3. GET pdfbug.example.com... Edge seems to disregard the first POST completely, and rely on the next GET requests. Of course, since in the case of the sample web site the PDF is only sent when using POST, no PDF is actually downloaded or displayed. And in my production site which triggerred this whole investigation , the PDF file is only generated when the browser is making a POST request anyway. My sample web site works fine if you select attach so that the file is forcefully downloaded as an attachment, instead of being displayd inline . And to verify that this is indeed a problem with Microsoft Edge for Android, I tried it with other browsers of course , and on desktop works fine and from iOS works fine as well . Another workaround was to disable the Directly view PDF in Tab V2 by going to the address edge flags edge new pdf viewer v2 edge flags edge new pdf viewer v2 and disabling that feature. Of course I may be wrong in my assessment, but I think I ve covered all the bases. Does anyone else have any similar experience? Can anyone else confirm my findings?"</div>
+                    <div class="example-meta">
+                        <span class="source">Unwrap (<a href='https://www.reddit.com/r/MicrosoftEdge/comments/1ktjof5/' target='_blank'>Source</a>)</span> | 
+                        <span class="date">2025-05-23</span> | 
+                        <span class="sentiment" style="color: red;">Negative</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"even the latest version still hasn t resolved the EDGE titlebar issue on corporate profiles. this hides the top portion of webpages and even blocks the tab view panel so you can t close the top two tabs anymore as the x is obscured by the edge bar. this happens when you unlock the app..go away for a while then open it up again..or switch to personal profile then straight back again. been the same since the 120 version or before that ..no improvement"</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-25</span> | 
+                        <span class="sentiment" style="color: red;">Negative</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"i was chrome user since the begining of android and it was great but the dark mode was the thing which i have always missed in that. well i see a lot of good options like dark mode ,reader mode button, print page in pdf and whatnot when i introduced to edge and sinse then i have never used chrome."</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-20</span> | 
+                        <span class="sentiment" style="color: green;">Positive</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"been using since it came out. had an issue where web pages stopped working. however after leaving a review Microsoft reached out and we were able to figure it out. back to 5 stars."</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-12</span> | 
+                        <span class="sentiment" style="color: red;">Negative</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"Think for the reviews good up up include upgrudtion"</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-08</span> | 
+                        <span class="sentiment" style="color: green;">Positive</span>
+                    </div>
+                </div>
+                
+                </div>
+            </div>
+            
+            </div>
+        </div>
+        
+        <div class="category-section" id="performance">
+            <h3>Performance</h3>
+            <div class="category-stats">
+                <div class="stat-item">
+                    <span class="stat-label">Total Feedback:</span>
+                    <span class="stat-value">70</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Sentiment:</span>
+                    <span class="stat-value">
+                        <span style="color: green;">42.9% Positive</span> | 
+                        <span style="color: gray;">15.7% Neutral</span> | 
+                        <span style="color: red;">41.4% Negative</span>
+                    </span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Feature Requests:</span>
+                    <span class="stat-value">7</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Bug Reports:</span>
+                    <span class="stat-value">25</span>
+                </div>
+            </div>
+            <div class="examples-container">
+                <h4>Top Examples:</h4>
+                
+            <div class="example-card">
+                <div class="example-text">"fast and easy to use"</div>
+                <div class="example-meta">
+                    <span class="source">Google Play App Store</span> | 
+                    <span class="date">2025-05-16</span> | 
+                    <span class="sentiment" style="color: green;">Positive</span>
+                </div>
+            </div>
+            
+            <div class="example-card">
+                <div class="example-text">"Good app. Using on both Laptop and Android. Sometimes, it lags, needs more improvement, and performance fixes."</div>
+                <div class="example-meta">
+                    <span class="source">Google Play App Store</span> | 
+                    <span class="date">2025-05-20</span> | 
+                    <span class="sentiment" style="color: green;">Positive</span>
+                </div>
+            </div>
+            
+            <div class="example-card">
+                <div class="example-text">"I use Edge for all of my business management. It s fast, safe, and efficient."</div>
+                <div class="example-meta">
+                    <span class="source">Google Play App Store</span> | 
+                    <span class="date">2025-05-19</span> | 
+                    <span class="sentiment" style="color: green;">Positive</span>
+                </div>
+            </div>
+            
+            <div class="example-card">
+                <div class="example-text">"Great! Fast, reliable, it s my default on birth Windows and Android! Bing is also improving, maybe it will be default soon."</div>
+                <div class="example-meta">
+                    <span class="source">Google Play App Store</span> | 
+                    <span class="date">2025-05-18</span> | 
+                    <span class="sentiment" style="color: green;">Positive</span>
+                </div>
+            </div>
+            
+            <div class="example-card">
+                <div class="example-text">"Excellent app lots of features don t know how fast. or bid it work like its support to like the other"</div>
+                <div class="example-meta">
+                    <span class="source">Google Play App Store</span> | 
+                    <span class="date">2025-05-17</span> | 
+                    <span class="sentiment" style="color: green;">Positive</span>
+                </div>
+            </div>
+            
+            </div>
+            <div class="subcategories-container">
+                <h4>Subcategories:</h4>
+                
+            <div class="subcategory-section">
+                <h4>Crashes <span class="count">(18, 25.7%)</span></h4>
+                <div class="examples-container">
+                    
+                <div class="example-card">
+                    <div class="example-text">"app is crashing in private tab and also it closes suddenly between browsing edit after updating app app is crashing more often and it also take 2 minute to open"</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-16</span> | 
+                        <span class="sentiment" style="color: red;">Negative</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"Edge started crashing unexpectedly since the last update. It happens after just a couple of minutes of usage, with a minor number of tabs open. Description of the problem. When I switch back from a phone call or from another app to Edge, it often closes right away, or after I click on the page."</div>
+                    <div class="example-meta">
+                        <span class="source">Unwrap</span> | 
+                        <span class="date">2025-05-21</span> | 
+                        <span class="sentiment" style="color: red;">Negative</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"No change on my Android 14 device, my older, Android 10 does not have this problem, it clears exits fine, will be uninstalling on my new device for now until it s fixed.. Clear data on exit seems to be broken, it does not clear anything, all my tabs are still opened, even though every box is checked in that option, including selecting all time for how far back to delete. I do see the prompt clearing data after I select exit browser, but reopening it shows all my old tabs"</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-09</span> | 
+                        <span class="sentiment" style="color: red;">Negative</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"keeps crashing so I can t no longer use this browser"</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-10</span> | 
+                        <span class="sentiment" style="color: red;">Negative</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"Extensions keep crashing"</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-11</span> | 
+                        <span class="sentiment" style="color: red;">Negative</span>
+                    </div>
+                </div>
+                
+                </div>
+            </div>
+            
+            <div class="subcategory-section">
+                <h4>Memory Usage <span class="count">(1, 1.4%)</span></h4>
+                <div class="examples-container">
+                    
+                <div class="example-card">
+                    <div class="example-text">"It used to be good but now... I have notices edge has become heavy and drags itself. Has become slow when I open multiple tabs. Webpages don t remain open even when revisiting the app after 10 15 minutes. Serious RAM management."</div>
+                    <div class="example-meta">
+                        <span class="source">iOS App Store</span> | 
+                        <span class="date">2025-05-24</span> | 
+                        <span class="sentiment" style="color: gray;">Neutral</span>
+                    </div>
+                </div>
+                
+                </div>
+            </div>
+            
+            <div class="subcategory-section">
+                <h4>Speed Issues <span class="count">(34, 48.6%)</span></h4>
+                <div class="examples-container">
+                    
+                <div class="example-card">
+                    <div class="example-text">"After either the last update for edge or Samsung for a s23 ultra this sucks. While it s open it will constantly slide sideways from the right to a blank page. It s so fast you can t even see what it is."</div>
+                    <div class="example-meta">
+                        <span class="source">Unwrap</span> | 
+                        <span class="date">2025-05-12</span> | 
+                        <span class="sentiment" style="color: green;">Positive</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"Great! Fast, reliable, it s my default on birth Windows and Android! Bing is also improving, maybe it will be default soon."</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-18</span> | 
+                        <span class="sentiment" style="color: green;">Positive</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"Fast browser and better Friendly user"</div>
+                    <div class="example-meta">
+                        <span class="source">iOS App Store</span> | 
+                        <span class="date">2025-05-18</span> | 
+                        <span class="sentiment" style="color: green;">Positive</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"I want to share my experience, all over the browser is nice and fast but whenever I m trying to download some big file suppose size more than 1.5 2 gb, then the browser freezes for a while which doesn t happen on any other browser. The experience will be top notch if they fix this thing."</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-08</span> | 
+                        <span class="sentiment" style="color: green;">Positive</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"clean and smooth working faster than Chrome or Firefox. and more accurate with the AI."</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-08</span> | 
+                        <span class="sentiment" style="color: green;">Positive</span>
+                    </div>
+                </div>
+                
+                </div>
+            </div>
+            
+            </div>
+        </div>
+        
+        <div class="category-section" id="privacy-&-security">
+            <h3>Privacy & Security</h3>
+            <div class="category-stats">
+                <div class="stat-item">
+                    <span class="stat-label">Total Feedback:</span>
+                    <span class="stat-value">25</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Sentiment:</span>
+                    <span class="stat-value">
+                        <span style="color: green;">28.0% Positive</span> | 
+                        <span style="color: gray;">60.0% Neutral</span> | 
+                        <span style="color: red;">12.0% Negative</span>
+                    </span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Feature Requests:</span>
+                    <span class="stat-value">3</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Bug Reports:</span>
+                    <span class="stat-value">2</span>
+                </div>
+            </div>
+            <div class="examples-container">
+                <h4>Top Examples:</h4>
+                
+            <div class="example-card">
+                <div class="example-text">"Ga rekomen buat browsing nyaman! Kurang efektif blokir iklan. Apalagi popup dan pengalihan langsung ke aplikasi lain yang sangat mengganggu. Tidak ada pilihan untuk mengontrolnya. bug download tidak terlihat, gapernah diperbaiki! Ad blocker selalu terdeteksi situs."</div>
+                <div class="example-meta">
+                    <span class="source">Google Play App Store</span> | 
+                    <span class="date">2025-05-25</span> | 
+                    <span class="sentiment" style="color: red;">Negative</span>
+                </div>
+            </div>
+            
+            <div class="example-card">
+                <div class="example-text">"just perfect to download chrome. not safe at all, forget it. Microsoft busy with other things they know very well."</div>
+                <div class="example-meta">
+                    <span class="source">Google Play App Store</span> | 
+                    <span class="date">2025-05-20</span> | 
+                    <span class="sentiment" style="color: green;">Positive</span>
+                </div>
+            </div>
+            
+            <div class="example-card">
+                <div class="example-text">"Better than expected. By a lot. Faster than Safari or Chrome by a landslide. Co Pilot AI integrated into is in great. Despite not being a privacy browser its ad blocking is great. Sometimes a browser s blocking is too aggressive and breaks the page Edge has found a great balance. The reader s mode is amazing, it will remove all the adds and just give you the text on a page."</div>
+                <div class="example-meta">
+                    <span class="source">iOS App Store</span> | 
+                    <span class="date">2025-05-20</span> | 
+                    <span class="sentiment" style="color: green;">Positive</span>
+                </div>
+            </div>
+            
+            <div class="example-card">
+                <div class="example-text">"so far great, more cookies control please."</div>
+                <div class="example-meta">
+                    <span class="source">Google Play App Store</span> | 
+                    <span class="date">2025-05-07</span> | 
+                    <span class="sentiment" style="color: green;">Positive</span>
+                </div>
+            </div>
+            
+            <div class="example-card">
+                <div class="example-text">"I use Edge because it is easy to use AND I feel safer on the internet."</div>
+                <div class="example-meta">
+                    <span class="source">Google Play App Store</span> | 
+                    <span class="date">2025-05-10</span> | 
+                    <span class="sentiment" style="color: green;">Positive</span>
+                </div>
+            </div>
+            
+            </div>
+            <div class="subcategories-container">
+                <h4>Subcategories:</h4>
+                
+            <div class="subcategory-section">
+                <h4>Ad Blocking <span class="count">(10, 40.0%)</span></h4>
+                <div class="examples-container">
+                    
+                <div class="example-card">
+                    <div class="example-text">"Ga rekomen buat browsing nyaman! Kurang efektif blokir iklan. Apalagi popup dan pengalihan langsung ke aplikasi lain yang sangat mengganggu. Tidak ada pilihan untuk mengontrolnya. bug download tidak terlihat, gapernah diperbaiki! Ad blocker selalu terdeteksi situs."</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-25</span> | 
+                        <span class="sentiment" style="color: red;">Negative</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"Browser is also bloated with AI, shopping, news feed and weather can be turned off in settings . Ad blocker often leaves empty divs where ads were blocked. Support for more extentions is needed block autoplay, return YouTube dislikes, block annoyances such as switch to app prompt, etc. . Translated page view resets to original if you switch tabs."</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-25</span> | 
+                        <span class="sentiment" style="color: green;">Positive</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"The built in ad blocking is subpar. Wider extension support would go far in letting people add third party ad blockers like uBlock . Not enough protection from websites auto redirecting means I don t feel totally safe using this browser. The extensions Edge on Android does have are still very limited."</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-25</span> | 
+                        <span class="sentiment" style="color: green;">Positive</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"There s no import bookmarks from other mobile browser, just from pc browser. The pop up blocker also useless, I also received lots more ads then when I used Kiwi browser rip ."</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-15</span> | 
+                        <span class="sentiment" style="color: red;">Negative</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"Better than expected. By a lot. Faster than Safari or Chrome by a landslide. Co Pilot AI integrated into is in great. Despite not being a privacy browser its ad blocking is great. Sometimes a browser s blocking is too aggressive and breaks the page Edge has found a great balance. The reader s mode is amazing, it will remove all the adds and just give you the text on a page."</div>
+                    <div class="example-meta">
+                        <span class="source">iOS App Store</span> | 
+                        <span class="date">2025-05-20</span> | 
+                        <span class="sentiment" style="color: green;">Positive</span>
+                    </div>
+                </div>
+                
+                </div>
+            </div>
+            
+            <div class="subcategory-section">
+                <h4>InPrivate Browsing <span class="count">(2, 8.0%)</span></h4>
+                <div class="examples-container">
+                    
+                <div class="example-card">
+                    <div class="example-text">"Microfoft Edge è un browser veloce e sicuro ora disponibile per Android è alimentato dall intelligenza artificiale con Copilot integrato. Inoltre da priorità alla privacy con strumenti di sicurezza come Microsoft difender SmartSceen e la navigazione integrata inprivate al fine di tutelare la navigazione in internet, nonché la cronogia in sostanza è il miglior browser esistente."</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-23</span> | 
+                        <span class="sentiment" style="color: gray;">Neutral</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"闪退严重 经常卡死然后闪退 尤其是在inPrivate页面上"</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-07</span> | 
+                        <span class="sentiment" style="color: gray;">Neutral</span>
+                    </div>
+                </div>
+                
+                </div>
+            </div>
+            
+            <div class="subcategory-section">
+                <h4>Permissions <span class="count">(1, 4.0%)</span></h4>
+                <div class="examples-container">
+                    
+                <div class="example-card">
+                    <div class="example-text">"Extensions in the desktop version are not allowed to read and modify website data and clipboard content, but why are they allowed to in the Android version?!!! This is very scary for our security and privacy!!"</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-14</span> | 
+                        <span class="sentiment" style="color: gray;">Neutral</span>
+                    </div>
+                </div>
+                
+                </div>
+            </div>
+            
+            <div class="subcategory-section">
+                <h4>Tracking Prevention <span class="count">(1, 4.0%)</span></h4>
+                <div class="examples-container">
+                    
+                <div class="example-card">
+                    <div class="example-text">"Invasive The tracking is ridiculous. !!!"</div>
+                    <div class="example-meta">
+                        <span class="source">iOS App Store</span> | 
+                        <span class="date">2025-05-09</span> | 
+                        <span class="sentiment" style="color: gray;">Neutral</span>
+                    </div>
+                </div>
+                
+                </div>
+            </div>
+            
+            </div>
+        </div>
+        
+        <div class="category-section" id="search-experience">
+            <h3>Search Experience</h3>
+            <div class="category-stats">
+                <div class="stat-item">
+                    <span class="stat-label">Total Feedback:</span>
+                    <span class="stat-value">116</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Sentiment:</span>
+                    <span class="stat-value">
+                        <span style="color: green;">21.6% Positive</span> | 
+                        <span style="color: gray;">68.1% Neutral</span> | 
+                        <span style="color: red;">10.3% Negative</span>
+                    </span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Feature Requests:</span>
+                    <span class="stat-value">10</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Bug Reports:</span>
+                    <span class="stat-value">10</span>
+                </div>
+            </div>
+            <div class="examples-container">
+                <h4>Top Examples:</h4>
+                
+            <div class="example-card">
+                <div class="example-text">"Ok, one major complaint with edge mobile. Please allow us to set custom search engines like on desktop microsoft MicrosoftEdge"</div>
+                <div class="example-meta">
+                    <span class="source">Unwrap (<a href='https://twitter.com/1362666359646167041/status/1923439116185706728' target='_blank'>Source</a>)</span> | 
+                    <span class="date">2025-05-16</span> | 
+                    <span class="sentiment" style="color: green;">Positive</span>
+                </div>
+            </div>
+            
+            <div class="example-card">
+                <div class="example-text">"Suggestion for Enhancing the Review System on the Microsoft Store Dear Microsoft Support Team,I hope this message finds you well. I am writing to propose an enhancement to the user experience on the Microsoft Store for PC applications.Currently, many users face challenges in fully expressing their opinions when writing reviews for applications and software. The limited space allocated for text input often restricts users from conveying their thoughts comprehensively.I suggest increasing the character limit for the review text field, allowing users to provide more detailed and informative feedback. This improvement would not only enhance the quality of information available to other users but also assist them in making more informed decisions when selecting applications.Thank you for considering this suggestion. I look forward to seeing future improvements in the Microsoft Store.Best regards,"</div>
+                <div class="example-meta">
+                    <span class="source">iOS App Store</span> | 
+                    <span class="date">2025-05-17</span> | 
+                    <span class="sentiment" style="color: green;">Positive</span>
+                </div>
+            </div>
+            
+            <div class="example-card">
+                <div class="example-text">"I like the points I earn to exchange for things. I don t like how the bing search results often gives me different answers from copilot?"</div>
+                <div class="example-meta">
+                    <span class="source">Google Play App Store</span> | 
+                    <span class="date">2025-05-22</span> | 
+                    <span class="sentiment" style="color: green;">Positive</span>
+                </div>
+            </div>
+            
+            <div class="example-card">
+                <div class="example-text">"I love Microsoft Edge it is easy to use. they explain things and make it easier to understand than most websites however when I try to listen to my favorite podcasts it Doesn t play it so then I can t listen to them great app please fix soon I would recommend installing"</div>
+                <div class="example-meta">
+                    <span class="source">Google Play App Store</span> | 
+                    <span class="date">2025-05-21</span> | 
+                    <span class="sentiment" style="color: green;">Positive</span>
+                </div>
+            </div>
+            
+            <div class="example-card">
+                <div class="example-text">"The read aloud feature rarely works. This is consistent across all of Microsoft s Android apps I ve used. There is also an issue with when you try a new summary on a different page on the same website, that Copilot will do a summary for the previous webpage unless you leave the app and do it again."</div>
+                <div class="example-meta">
+                    <span class="source">Google Play App Store</span> | 
+                    <span class="date">2025-05-07</span> | 
+                    <span class="sentiment" style="color: red;">Negative</span>
+                </div>
+            </div>
+            
+            </div>
+            <div class="subcategories-container">
+                <h4>Subcategories:</h4>
+                
+            <div class="subcategory-section">
+                <h4>AI Features <span class="count">(75, 64.7%)</span></h4>
+                <div class="examples-container">
+                    
+                <div class="example-card">
+                    <div class="example-text">"Ok, one major complaint with edge mobile. Please allow us to set custom search engines like on desktop microsoft MicrosoftEdge"</div>
+                    <div class="example-meta">
+                        <span class="source">Unwrap (<a href='https://twitter.com/1362666359646167041/status/1923439116185706728' target='_blank'>Source</a>)</span> | 
+                        <span class="date">2025-05-16</span> | 
+                        <span class="sentiment" style="color: green;">Positive</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"I love Microsoft Edge it is easy to use. they explain things and make it easier to understand than most websites however when I try to listen to my favorite podcasts it Doesn t play it so then I can t listen to them great app please fix soon I would recommend installing"</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-21</span> | 
+                        <span class="sentiment" style="color: green;">Positive</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"Edge It is MS Edge. I don t need to expand on that. Google drives everything else and I loathe its intrusiveness and selling me to advertisers, trackers and its own very special overall creepiness. I had to remove and replace it because Edge VPN was not available in my settings. VPN is the great anonymiser in the world of endless trackers and data scrapers. And Google is the biggest villain of all. Well, except maybe the FSB."</div>
+                    <div class="example-meta">
+                        <span class="source">iOS App Store</span> | 
+                        <span class="date">2025-05-07</span> | 
+                        <span class="sentiment" style="color: green;">Positive</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"Lack of Support I have been confronting some issues for which I have asked for help to no avail. Before I would get the assistance needed within a couple of days but no I don t get any type of response nor assistance from Microsoft"</div>
+                    <div class="example-meta">
+                        <span class="source">iOS App Store</span> | 
+                        <span class="date">2025-05-09</span> | 
+                        <span class="sentiment" style="color: red;">Negative</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"Nur Probleme App hängt sich auf, E Mail Adresse ist falsch, Änderung immer mit neuem Passwort, es funktioniert sehr wenig. Gleich wieder gelöscht. KI nervt weil konfuse Ergebnisse."</div>
+                    <div class="example-meta">
+                        <span class="source">iOS App Store</span> | 
+                        <span class="date">2025-05-18</span> | 
+                        <span class="sentiment" style="color: red;">Negative</span>
+                    </div>
+                </div>
+                
+                </div>
+            </div>
+            
+            <div class="subcategory-section">
+                <h4>Search Engine Choice <span class="count">(26, 22.4%)</span></h4>
+                <div class="examples-container">
+                    
+                <div class="example-card">
+                    <div class="example-text">"Another Microsoft browser, like Bing and MSN. Don t see the point, really."</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-25</span> | 
+                        <span class="sentiment" style="color: green;">Positive</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"I ve had pretty good luck with Edge. I dont mind it at all actually. but, I wud be torn, tho....if I hadto choose it over like every other search engine.....i.e. Bing and or Google of course."</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-20</span> | 
+                        <span class="sentiment" style="color: green;">Positive</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"Спасибо разработчики! Приложение очень хорошо оптимизированое и плавно работает в отличии от chrome и Google. eng Thanks developers! The application is very well optimized and works smoothly unlike chrome and Google."</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-10</span> | 
+                        <span class="sentiment" style="color: green;">Positive</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"Great search engine to use."</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-15</span> | 
+                        <span class="sentiment" style="color: green;">Positive</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"Helpful search engine"</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-15</span> | 
+                        <span class="sentiment" style="color: green;">Positive</span>
+                    </div>
+                </div>
+                
+                </div>
+            </div>
+            
+            <div class="subcategory-section">
+                <h4>Search Quality <span class="count">(3, 2.6%)</span></h4>
+                <div class="examples-container">
+                    
+                <div class="example-card">
+                    <div class="example-text">"Suggestion for Enhancing the Review System on the Microsoft Store Dear Microsoft Support Team,I hope this message finds you well. I am writing to propose an enhancement to the user experience on the Microsoft Store for PC applications.Currently, many users face challenges in fully expressing their opinions when writing reviews for applications and software. The limited space allocated for text input often restricts users from conveying their thoughts comprehensively.I suggest increasing the character limit for the review text field, allowing users to provide more detailed and informative feedback. This improvement would not only enhance the quality of information available to other users but also assist them in making more informed decisions when selecting applications.Thank you for considering this suggestion. I look forward to seeing future improvements in the Microsoft Store.Best regards,"</div>
+                    <div class="example-meta">
+                        <span class="source">iOS App Store</span> | 
+                        <span class="date">2025-05-17</span> | 
+                        <span class="sentiment" style="color: green;">Positive</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"es una app muy intuitiva y se va adaptando a las nuevas tecnologías, incorporó copilot que resulta en una gran ayuda en las búsquedas."</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-25</span> | 
+                        <span class="sentiment" style="color: gray;">Neutral</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"Excelente, rápido y de resultados en la búsqueda que en otros motores no se encuentran"</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-19</span> | 
+                        <span class="sentiment" style="color: gray;">Neutral</span>
+                    </div>
+                </div>
+                
+                </div>
+            </div>
+            
+            <div class="subcategory-section">
+                <h4>Search Suggestions <span class="count">(1, 0.9%)</span></h4>
+                <div class="examples-container">
+                    
+                <div class="example-card">
+                    <div class="example-text">"what s the point of the address bar moving to the bottom when website suggestions still show from the top?"</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-16</span> | 
+                        <span class="sentiment" style="color: gray;">Neutral</span>
+                    </div>
+                </div>
+                
+                </div>
+            </div>
+            
+            </div>
+        </div>
+        
+        <div class="category-section" id="sync-&-integration">
+            <h3>Sync & Integration</h3>
+            <div class="category-stats">
+                <div class="stat-item">
+                    <span class="stat-label">Total Feedback:</span>
+                    <span class="stat-value">21</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Sentiment:</span>
+                    <span class="stat-value">
+                        <span style="color: green;">19.0% Positive</span> | 
+                        <span style="color: gray;">66.7% Neutral</span> | 
+                        <span style="color: red;">14.3% Negative</span>
+                    </span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Feature Requests:</span>
+                    <span class="stat-value">4</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Bug Reports:</span>
+                    <span class="stat-value">3</span>
+                </div>
+            </div>
+            <div class="examples-container">
+                <h4>Top Examples:</h4>
+                
+            <div class="example-card">
+                <div class="example-text">"Keeps me happy without snags in most question s l have to do. l have tried similarly over the years and by far. The comunication is so far ahead, what ever question I give the more extra information is automatically sent connected and it always helps every time l love it .."</div>
+                <div class="example-meta">
+                    <span class="source">Google Play App Store</span> | 
+                    <span class="date">2025-05-18</span> | 
+                    <span class="sentiment" style="color: green;">Positive</span>
+                </div>
+            </div>
+            
+            <div class="example-card">
+                <div class="example-text">"forces to log in with the same intune Microsoft account. cannot use separately. useless"</div>
+                <div class="example-meta">
+                    <span class="source">Google Play App Store</span> | 
+                    <span class="date">2025-05-17</span> | 
+                    <span class="sentiment" style="color: red;">Negative</span>
+                </div>
+            </div>
+            
+            <div class="example-card">
+                <div class="example-text">"This app can t even want sign in me. Worst app. When I am trying with my email it says something went wrong . And when I trying with my phone number it says give your email address and when I give, it says please try again later. What am I supposed to do with this app . Fix it."</div>
+                <div class="example-meta">
+                    <span class="source">Google Play App Store</span> | 
+                    <span class="date">2025-05-14</span> | 
+                    <span class="sentiment" style="color: red;">Negative</span>
+                </div>
+            </div>
+            
+            <div class="example-card">
+                <div class="example-text">"It is getting worse and worse day by day i am trying to login through my mom s email but I am not able to recieve any kind of code OTP from their behalf. Also earlier microsoft rewards was a helpful program but now I don t seem any value of using it."</div>
+                <div class="example-meta">
+                    <span class="source">Google Play App Store</span> | 
+                    <span class="date">2025-05-25</span> | 
+                    <span class="sentiment" style="color: green;">Positive</span>
+                </div>
+            </div>
+            
+            <div class="example-card">
+                <div class="example-text">"This is an amazing browser, but I can not seem to log out my Edge Profile from some devices. How do I fix this? I m no longer using these devices and have no authority to completely restart it office belonging . Thank you."</div>
+                <div class="example-meta">
+                    <span class="source">Google Play App Store</span> | 
+                    <span class="date">2025-05-08</span> | 
+                    <span class="sentiment" style="color: green;">Positive</span>
+                </div>
+            </div>
+            
+            </div>
+            <div class="subcategories-container">
+                <h4>Subcategories:</h4>
+                
+            <div class="subcategory-section">
+                <h4>Account Issues <span class="count">(13, 61.9%)</span></h4>
+                <div class="examples-container">
+                    
+                <div class="example-card">
+                    <div class="example-text">"It is getting worse and worse day by day i am trying to login through my mom s email but I am not able to recieve any kind of code OTP from their behalf. Also earlier microsoft rewards was a helpful program but now I don t seem any value of using it."</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-25</span> | 
+                        <span class="sentiment" style="color: green;">Positive</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"forces to log in with the same intune Microsoft account. cannot use separately. useless"</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-17</span> | 
+                        <span class="sentiment" style="color: red;">Negative</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"This app can t even want sign in me. Worst app. When I am trying with my email it says something went wrong . And when I trying with my phone number it says give your email address and when I give, it says please try again later. What am I supposed to do with this app . Fix it."</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-14</span> | 
+                        <span class="sentiment" style="color: red;">Negative</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"This is an amazing browser, but I can not seem to log out my Edge Profile from some devices. How do I fix this? I m no longer using these devices and have no authority to completely restart it office belonging . Thank you."</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-08</span> | 
+                        <span class="sentiment" style="color: green;">Positive</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"Local IP website not loading I have to use safari now. Any local such as a router webconsole just flashes with a blank tab and does not load website or even give an error.Update Issue resolved. My initial one star rating was more out of frustration due to relying on Safari and dealing with unsynced 365 Business account data. However, after the latest iOS firmware beta update, both my iPhone and iPad load pages smoothly possibly even a bit faster. I now receive an unsecured warning on local intranet sites and can proceed without any problems instead of a blank page."</div>
+                    <div class="example-meta">
+                        <span class="source">iOS App Store</span> | 
+                        <span class="date">2025-05-16</span> | 
+                        <span class="sentiment" style="color: red;">Negative</span>
+                    </div>
+                </div>
+                
+                </div>
+            </div>
+            
+            <div class="subcategory-section">
+                <h4>Cross-device Sync <span class="count">(6, 28.6%)</span></h4>
+                <div class="examples-container">
+                    
+                <div class="example-card">
+                    <div class="example-text">"doesn t sync shhh from the edge app on my xbox to my smartphone . uninstalled it . I will never get that 10 mins of my life back ever."</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-24</span> | 
+                        <span class="sentiment" style="color: gray;">Neutral</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"navigateur agréable à utiliser, rapide, la synchronisation est bien pratique, et son côté personnalisable le rend d autant plus sympathique."</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-19</span> | 
+                        <span class="sentiment" style="color: gray;">Neutral</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"Seit dem Update am 6.5. nicht mehr zu gebrauchen. Adressleiste ist nur noch im Quermodus da, Sync geht nicht mehr und stürzt ab. Surface Duo 2, sollte MS hinbekommen zumindest die eigene HW zu unterstützen..."</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-13</span> | 
+                        <span class="sentiment" style="color: gray;">Neutral</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"Used to love this browser. Now, my favorites no longer sync from my laptop to phone. I ve spent hours trying to resolve the issue. I m forced to save on collections only."</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-12</span> | 
+                        <span class="sentiment" style="color: gray;">Neutral</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"Der Ton beim Videoschauen bricht immer wieder ab. Der Ton beim Videoschauen bricht immer wieder ab. Ansonsten funktioniert vieles, vor Allem die Synchronisierung von Lesezeichen zwischen mehreren Geräten.Keine Ahnung, ob das an der Safari Software liegt, die Microsoft Edge ja zu einem Teil mitbenutzen muss."</div>
+                    <div class="example-meta">
+                        <span class="source">iOS App Store</span> | 
+                        <span class="date">2025-05-20</span> | 
+                        <span class="sentiment" style="color: gray;">Neutral</span>
+                    </div>
+                </div>
+                
+                </div>
+            </div>
+            
+            <div class="subcategory-section">
+                <h4>Ecosystem Integration <span class="count">(1, 4.8%)</span></h4>
+                <div class="examples-container">
+                    
+                <div class="example-card">
+                    <div class="example-text">"once i tried edge browser on my laptop, i preferred Microsoft ecosystem than Google instead"</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-25</span> | 
+                        <span class="sentiment" style="color: gray;">Neutral</span>
+                    </div>
+                </div>
+                
+                </div>
+            </div>
+            
+            </div>
+        </div>
+        
+        <div class="category-section" id="user-interface">
+            <h3>User Interface</h3>
+            <div class="category-stats">
+                <div class="stat-item">
+                    <span class="stat-label">Total Feedback:</span>
+                    <span class="stat-value">115</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Sentiment:</span>
+                    <span class="stat-value">
+                        <span style="color: green;">15.7% Positive</span> | 
+                        <span style="color: gray;">65.2% Neutral</span> | 
+                        <span style="color: red;">19.1% Negative</span>
+                    </span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Feature Requests:</span>
+                    <span class="stat-value">18</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Bug Reports:</span>
+                    <span class="stat-value">21</span>
+                </div>
+            </div>
+            <div class="examples-container">
+                <h4>Top Examples:</h4>
+                
+            <div class="example-card">
+                <div class="example-text">"There is a black space on right and bottom when video is initially made full screen in landscape mode. It gets properly centered when tapped again. This issue is only in Edge Android. Using Kiwi Browser, did not have this issue. How do I fix it?"</div>
+                <div class="example-meta">
+                    <span class="source">Unwrap (<a href='https://www.reddit.com/r/MicrosoftEdge/comments/1kvkz5s/' target='_blank'>Source</a>)</span> | 
+                    <span class="date">2025-05-26</span> | 
+                    <span class="sentiment" style="color: red;">Negative</span>
+                </div>
+            </div>
+            
+            <div class="example-card">
+                <div class="example-text">"Every new version is worse than the last. I m considering going back to Chrome. Your response sounds like AI. But here s what s wrong the address bar and buttons just disappear. I have to force close the app to be able to surf."</div>
+                <div class="example-meta">
+                    <span class="source">Google Play App Store</span> | 
+                    <span class="date">2025-05-16</span> | 
+                    <span class="sentiment" style="color: green;">Positive</span>
+                </div>
+            </div>
+            
+            <div class="example-card">
+                <div class="example-text">"Exciting experience Yes, I am happy browsing sites using MSN Edge. It is very friendly, fast directly reaching to meet my requirements. Copilot experience is amazing."</div>
+                <div class="example-meta">
+                    <span class="source">iOS App Store</span> | 
+                    <span class="date">2025-05-16</span> | 
+                    <span class="sentiment" style="color: green;">Positive</span>
+                </div>
+            </div>
+            
+            <div class="example-card">
+                <div class="example-text">"it s easy to use, you can easily understand the function of the buttons, minimalist design. love it"</div>
+                <div class="example-meta">
+                    <span class="source">Google Play App Store</span> | 
+                    <span class="date">2025-05-08</span> | 
+                    <span class="sentiment" style="color: green;">Positive</span>
+                </div>
+            </div>
+            
+            <div class="example-card">
+                <div class="example-text">"Ficed Now swipe down from the search field to access the tabs Bug in Tablet Mode Tab number overview button missing. Unusable on Fold Z 3 scrolling through open tabs in top tab list cumbersome. Same in standard Edge and Canary. Please add Tab overview button in Tablet mode!"</div>
+                <div class="example-meta">
+                    <span class="source">Google Play App Store</span> | 
+                    <span class="date">2025-05-20</span> | 
+                    <span class="sentiment" style="color: red;">Negative</span>
+                </div>
+            </div>
+            
+            </div>
+            <div class="subcategories-container">
+                <h4>Subcategories:</h4>
+                
+            <div class="subcategory-section">
+                <h4>Layout Issues <span class="count">(2, 1.7%)</span></h4>
+                <div class="examples-container">
+                    
+                <div class="example-card">
+                    <div class="example-text">"Horrible layout and a pain to use."</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-25</span> | 
+                        <span class="sentiment" style="color: red;">Negative</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"please improve the display of multiple tabs so we can see them simultaneously"</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-20</span> | 
+                        <span class="sentiment" style="color: gray;">Neutral</span>
+                    </div>
+                </div>
+                
+                </div>
+            </div>
+            
+            <div class="subcategory-section">
+                <h4>Navigation Problems <span class="count">(28, 24.3%)</span></h4>
+                <div class="examples-container">
+                    
+                <div class="example-card">
+                    <div class="example-text">"could be an easier, quicker way of saving or loading saved favorites. like a shortcut on main tab bar."</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-18</span> | 
+                        <span class="sentiment" style="color: green;">Positive</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"Ficed Now swipe down from the search field to access the tabs Bug in Tablet Mode Tab number overview button missing. Unusable on Fold Z 3 scrolling through open tabs in top tab list cumbersome. Same in standard Edge and Canary. Please add Tab overview button in Tablet mode!"</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-20</span> | 
+                        <span class="sentiment" style="color: red;">Negative</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"it s easy to use, you can easily understand the function of the buttons, minimalist design. love it"</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-08</span> | 
+                        <span class="sentiment" style="color: green;">Positive</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"Dear Microsoft dev s, Whilst I understand that workspaces on the android browser is an experimental feature, it still doesn t stop me from providing feedback. As you know, workspaces can be accessed via the tab button but I am hitting two limitations 1 It appears that I cannot create a workspace from the android browser if not already created on the PC browser and 2 This feature disapears when switching to the large screen on a Galaxy Z Fold 6 device. Any chance to address these?"</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-10</span> | 
+                        <span class="sentiment" style="color: red;">Negative</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"Edge menu tabs are grayed out and reset did not fix the issue and no one wants to repair something when they never had a chance to use it because it was downloaded broken."</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-11</span> | 
+                        <span class="sentiment" style="color: red;">Negative</span>
+                    </div>
+                </div>
+                
+                </div>
+            </div>
+            
+            <div class="subcategory-section">
+                <h4>Visual Bugs <span class="count">(4, 3.5%)</span></h4>
+                <div class="examples-container">
+                    
+                <div class="example-card">
+                    <div class="example-text">"turning on dark mode causes the app to immediately restart and close all private tabs, which is quite annoying"</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-23</span> | 
+                        <span class="sentiment" style="color: red;">Negative</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"Drop feature no longer working This app was previously very good though a recent update has broken one of its most useful features Drop.It no longer works at all and when clicking the Drop icon, all that appears is a blank white screen. I have tried deleting and reinstalling but sadly no change.Please fix and I will update my review."</div>
+                    <div class="example-meta">
+                        <span class="source">iOS App Store</span> | 
+                        <span class="date">2025-05-10</span> | 
+                        <span class="sentiment" style="color: green;">Positive</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"black screen usually"</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-14</span> | 
+                        <span class="sentiment" style="color: gray;">Neutral</span>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-text">"Edge is my preferred browser due to it s mostly quite nice UI. My main gripe, apart from weird glitches after some updates is the inability to easily configure bookmark folders without syncing to a PC, which I no longer use. I have taken to adding folders and moving bookmarks one by one to get them into alphabetical order after adding new bookmarks. A bit OCD of me, I admit, but surely a not unreasonable expectation to have an easier way to accomplish this."</div>
+                    <div class="example-meta">
+                        <span class="source">Google Play App Store</span> | 
+                        <span class="date">2025-05-09</span> | 
+                        <span class="sentiment" style="color: gray;">Neutral</span>
+                    </div>
+                </div>
+                
+                </div>
+            </div>
+            
+            </div>
+        </div>
+        
+            </section>
+            
+            <section id="recommendations">
+                <h2>Recommendations</h2>
+                <p>Based on the analysis of user feedback, the following recommendations are proposed to improve the Microsoft Edge Mobile experience:</p>
+                
+                <h3>High Priority</h3>
+                <ol>
+                    <li><strong>Address performance issues:</strong> Focus on optimizing performance, particularly addressing crashes in InPrivate mode and slow loading times that were frequently mentioned in negative feedback.</li>
+                    <li><strong>Fix identified bugs:</strong> Prioritize fixing the fullscreen video display issues in landscape mode on Android and the PDF handling problems with POST requests.</li>
+                    <li><strong>Improve extension support:</strong> Enhance the availability and functionality of popular extensions like ad blockers, which were frequently requested and discussed by users.</li>
+                </ol>
+                
+                <h3>Medium Priority</h3>
+                <ol>
+                    <li><strong>Enhance UI consistency:</strong> Address the visual bugs and layout issues reported across different devices and screen orientations.</li>
+                    <li><strong>Optimize memory usage:</strong> Improve RAM management, especially when multiple tabs are open, as noted in several complaints about the app becoming slow over time.</li>
+                    <li><strong>Improve sync reliability:</strong> Ensure consistent syncing functionality across devices, as this was a point of both positive and negative feedback.</li>
+                </ol>
+                
+                <h3>Feature Enhancements</h3>
+                <ol>
+                    <li><strong>Expand extension ecosystem:</strong> Continue to add support for more extensions, particularly those that are popular on desktop versions.</li>
+                    <li><strong>Refine privacy features:</strong> Improve the InPrivate browsing experience and add more granular privacy controls as requested by users.</li>
+                    <li><strong>Enhance media handling:</strong> Improve video playback, particularly in fullscreen mode, addressing the visual bugs reported by multiple users.</li>
+                </ol>
+                
+                <h3>Continuous Improvement</h3>
+                <ol>
+                    <li><strong>Regular performance audits:</strong> Implement regular performance testing across different devices and usage scenarios.</li>
+                    <li><strong>Expand user feedback channels:</strong> Consider adding in-app feedback options to capture more structured and specific feedback.</li>
+                    <li><strong>Competitive analysis:</strong> Regularly compare Edge Mobile features and performance against competing browsers mentioned in user feedback.</li>
+                </ol>
+            </section>
+        </div>
+        
+        <footer>
+            <div class="container">
+                <p>Microsoft Edge Mobile User Feedback Analysis Report | Generated on May 27, 2025</p>
+            </div>
+        </footer>
+    </body>
+    </html>
+    
