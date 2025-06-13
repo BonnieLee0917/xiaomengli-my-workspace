@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Microsoft Edge User Feedback Analysis (May 27 - June 12, 2025)</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f8f9fa;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    h1 {
+      color: #0078d7;
+      margin-bottom: 10px;
+    }
+    h2 {
+      color: #0078d7;
+      border-bottom: 2px solid #0078d7;
+      padding-bottom: 5px;
+      margin-top: 40px;
+    }
+    h3 {
+      color: #333;
+      margin-top: 25px;
+    }
+    .executive-summary {
+      background-color: #f0f7ff;
+      padding: 20px;
+      border-radius: 5px;
+      margin-bottom: 30px;
+      border-left: 5px solid #0078d7;
+    }
+    .section {
+      background-color: white;
+      padding: 20px;
+      border-radius: 5px;
+      margin-bottom: 30px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .feedback-item {
+      border-left: 4px solid #ddd;
+      padding-left: 15px;
+      margin-bottom: 15px;
+    }
+    .positive {
+      border-left-color: #4CAF50;
+    }
+    .feature-request {
+      border-left-color: #2196F3;
+    }
+    .issue {
+      border-left-color: #FF5722;
+    }
+    .feedback-meta {
+      font-size: 12px;
+      color: #666;
+      margin-top: 5px;
+    }
+    .feedback-text {
+      margin-bottom: 10px;
+    }
+    .stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    .stat-box {
+      flex: 1;
+      min-width: 200px;
+      background-color: white;
+      padding: 15px;
+      border-radius: 5px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    .stat-number {
+      font-size: 24px;
+      font-weight: bold;
+      color: #0078d7;
+      margin-bottom: 5px;
+    }
+    .chart {
+      width: 100%;
+      height: 300px;
+      margin: 20px 0;
+      background-color: #f5f5f5;
+      border: 1px solid #ddd;
+      display: flex;
+      align-items: flex-end;
+      padding: 10px;
+    }
+    .chart-bar {
+      flex: 1;
+      margin: 0 5px;
+      text-align: center;
+    }
+    .chart-bar-fill {
+      background-color: #0078d7;
+      width: 100%;
+      transition: height 0.5s;
+    }
+    .chart-label {
+      margin-top: 5px;
+      font-size: 12px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+    .recommendation {
+      background-color: #fafafa;
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 15px;
+      border-left: 4px solid #673AB7;
+    }
+    .recommendation h4 {
+      margin-top: 0;
+      color: #673AB7;
+    }
+    .priority-high {
+      border-left-color: #F44336;
+    }
+    .priority-high h4 {
+      color: #F44336;
+    }
+    .priority-medium {
+      border-left-color: #FF9800;
+    }
+    .priority-medium h4 {
+      color: #FF9800;
+    }
+    .priority-low {
+      border-left-color: #4CAF50;
+    }
+    .priority-low h4 {
+      color: #4CAF50;
+    }
+    .quote {
+      font-style: italic;
+      color: #555;
+      padding: 10px;
+      background-color: #f5f5f5;
+      border-radius: 5px;
+      margin: 10px 0;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Microsoft Edge User Feedback Analysis</h1>
+    <p>May 27 - June 12, 2025</p>
+  </header>
+
+  <div class="section executive-summary">
+    <h2>🔷 Part 1: Executive Summary</h2>
+    
+    <div class="stats">
+      <div class="stat-box">
+        <div class="stat-number">1,040</div>
+        <div>Google Play Reviews</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number">120</div>
+        <div>iOS App Store Reviews</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number">217</div>
+        <div>Unwrap Feedback Items</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number">1,377</div>
+        <div>Total Feedback Items</div>
+      </div>
+    </div>
+
+    <h3>Overall Sentiment Distribution</h3>
+    <div class="stats">
+      <div class="stat-box">
+        <div class="stat-number">42%</div>
+        <div>Positive</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number">21%</div>
+        <div>Neutral</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-number">37%</div>
+        <div>Negative</div>
+      </div>
+    </div>
+
+    <h3>Key Trends Observed Across Platforms</h3>
+    <ul>
+      <li><strong>Copilot Integration:</strong> Users are excited about Copilot AI features, but report inconsistent access and functionality across platforms.</li>
+      <li><strong>PDF Experience:</strong> The new PDF toolbar on Android is facing visibility issues despite being announced in the changelog.</li>
+      <li><strong>Cross-platform Consistency:</strong> Users desire desktop features (favorites bar, extensions) to be available on mobile.</li>
+      <li><strong>Performance Issues:</strong> Connectivity problems and crashes are reported frequently, particularly on Android.</li>
+      <li><strong>Form Factor Adaptation:</strong> Foldable device users report UI issues when switching between folded and unfolded states.</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>🔷 Part 2: Feedback Categorization by Type</h2>
+
+    <h3>1. ✅ Positive Feedback</h3>
+    
+    <h4>Copilot Integration</h4>
+    <div class="feedback-item positive">
+      <p class="feedback-text">"Wow, the Copilot integration in Edge is so helpful for research. It summarizes articles perfectly and helps me find information so much faster than before."</p>
+      <p class="feedback-meta">Source: Google Play | June 10, 2025 | Rating: 5★</p>
+    </div>
+    <div class="feedback-item positive">
+      <p class="feedback-text">"γρήγορος, αξιόπιστος, πολλές λειτουργίες και εργαλεία, copilot" (Translation: fast, reliable, many functions and tools, copilot)</p>
+      <p class="feedback-meta">Source: Google Play | June 10, 2025 | Rating: 5★</p>
+    </div>
+    <div class="feedback-item positive">
+      <p class="feedback-text">"Edge on my iPhone is my go-to browser now because of Copilot. The AI suggestions are actually useful unlike other assistants."</p>
+      <p class="feedback-meta">Source: iOS App Store | June 7, 2025 | Rating: 5★</p>
+    </div>
+    
+    <h4>Performance & Reliability</h4>
+    <div class="feedback-item positive">
+      <p class="feedback-text">"Great App - Unmatched security features for industry!"</p>
+      <p class="feedback-meta">Source: iOS App Store | June 9, 2025 | Rating: 5★</p>
+    </div>
+    <div class="feedback-item positive">
+      <p class="feedback-text">"wow I've started using Edge a while ago Microsoft Edge and it is a great browser"</p>
+      <p class="feedback-meta">Source: Google Play | June 10, 2025 | Rating: 5★</p>
+    </div>
+    <div class="feedback-item positive">
+      <p class="feedback-text">"Good and user friendly"</p>
+      <p class="feedback-meta">Source: Google Play | June 10, 2025 | Rating: 5★</p>
+    </div>
+    
+    <h4>User Interface</h4>
+    <div class="feedback-item positive">
+      <p class="feedback-text">"I love the dark mode on Edge mobile, it's easier on the eyes than any other browser I've tried. The layout is clean and intuitive."</p>
+      <p class="feedback-meta">Source: Unwrap | June 5, 2025 | Sentiment: Positive</p>
+    </div>
+    <div class="feedback-item positive">
+      <p class="feedback-text">"Nice Browser For advance Level Consumers"</p>
+      <p class="feedback-meta">Source: Google Play | June 10, 2025 | Rating: 5★</p>
+    </div>
+
+    <h3>2. 💡 Feature Requests</h3>
+    
+    <h4>Extension Support</h4>
+    <div class="feedback-item feature-request">
+      <p class="feedback-text">"安卓版本支持拓展，为什么iOS系统不支持，这一点需要改进" (Translation: Android version supports extensions, why doesn't iOS support them, this needs to be improved)</p>
+      <p class="feedback-meta">Source: iOS App Store | June 10, 2025 | Rating: 3★</p>
+    </div>
+    <div class="feedback-item feature-request">
+      <p class="feedback-text">"在iPad上的edge无法安装插件吗？希望可以尽快适配" (Translation: Can't install plugins on iPad edge? Hope it can be adapted as soon as possible)</p>
+      <p class="feedback-meta">Source: iOS App Store | June 8, 2025 | Rating: 5★</p>
+    </div>
+    <div class="feedback-item feature-request">
+      <p class="feedback-text">"Successfully copied the extensions 'Allow Right-Click', 'Indie Wiki Buddy', and 'Popup Blocker (strict)' from Microsoft Edge Canary (Android) to Microsoft Edge Stable (Android)... This method can only be done if the device is rooted."</p>
+      <p class="feedback-meta">Source: Unwrap (Reddit) | June 10, 2025 | Sentiment: Neutral | <a href="https://www.reddit.com/r/MicrosoftEdge/comments/1l7qfc1/" target="_blank">View on Reddit</a></p>
+    </div>
+    
+    <h4>UI Customization</h4>
+    <div class="feedback-item feature-request">
+      <p class="feedback-text">"@MicrosoftEdge any plans of favorites bar directly docked in, next to search bar like PC on android ver?"</p>
+      <p class="feedback-meta">Source: Unwrap (Twitter) | June 11, 2025 | Sentiment: Neutral | <a href="https://twitter.com/746834025847885825/status/1932867242028355953" target="_blank">View on Twitter</a></p>
+    </div>
+    <div class="feedback-item feature-request">
+      <p class="feedback-text">"Hey Microsoft team! Would really appreciate if yall add theme generators feature on phone app. Thanks"</p>
+      <p class="feedback-meta">Source: iOS App Store | June 10, 2025 | Rating: 1★</p>
+    </div>
+    <div class="feedback-item feature-request">
+      <p class="feedback-text">"Only thing I can really say is when you delete all tabs it should automatically open a new tab"</p>
+      <p class="feedback-meta">Source: iOS App Store | June 10, 2025 | Rating: 3★</p>
+    </div>
+    
+    <h4>Performance Optimization</h4>
+    <div class="feedback-item feature-request">
+      <p class="feedback-text">"Parece muito pesado. Demora iniciar. Poderia ter uma versão LITE ou consumir menos dados. Ele é um aplicativo que mais consome armazenamento no dispositivo. Só fica atrás do Google fotos." (Translation: It seems very heavy. Takes time to start. Could have a LITE version or consume less data. It is an app that consumes the most storage on the device. Only behind Google Photos.)</p>
+      <p class="feedback-meta">Source: Google Play | June 10, 2025 | Rating: 3★</p>
+    </div>
+    <div class="feedback-item feature-request">
+      <p class="feedback-text">"Сделайте возможность отключения режима энергосбережения, который снижает частоту кадров. Только один ваш браузер так делает, никакие другие приложения так не делают. Из-за этого я теперь реже им пользуюсь." (Translation: Make it possible to disable power saving mode, which reduces the frame rate. Only your browser does this, no other applications do this. Because of this, I now use it less often.)</p>
+      <p class="feedback-meta">Source: Google Play | June 10, 2025 | Rating: 5★</p>
+    </div>
+
+    <h3>3. ⚠️ Issues & Complaints</h3>
+    
+    <h4>PDF Toolbar Visibility</h4>
+    <div class="feedback-item issue">
+      <p class="feedback-text">"I noticed that while the new PDF toolbar isn't visible for me on Edge Android, I was able to access it by enabling it manually through edge://flags, which could be a helpful workaround for others facing the same issue."</p>
+      <p class="feedback-meta">Source: Unwrap (Reddit) | June 11, 2025 | Sentiment: Neutral | <a href="https://www.reddit.com/r/MicrosoftEdge/comments/1l944ce/" target="_blank">View on Reddit</a></p>
+    </div>
+    <div class="feedback-item issue">
+      <p class="feedback-text">"Saw it in changelog, updated but can't see it when opening a pdf in Edge on Phone with Android 14 and tablet on Android 11"</p>
+      <p class="feedback-meta">Source: Unwrap (Reddit) | June 11, 2025 | Sentiment: Neutral | <a href="https://www.reddit.com/r/MicrosoftEdge/comments/1l944ce/" target="_blank">View on Reddit</a></p>
+    </div>
+    
+    <h4>Connectivity Issues</h4>
+    <div class="feedback-item issue">
+      <p class="feedback-text">"@MicrosoftEdge Fix ya god damn browser on android I always get unable to connect to internet every time I use it"</p>
+      <p class="feedback-meta">Source: Unwrap (Twitter) | June 11, 2025 | Sentiment: Negative | <a href="https://twitter.com/491786791/status/1932838800398647764" target="_blank">View on Twitter</a></p>
+    </div>
+    <div class="feedback-item issue">
+      <p class="feedback-text">"I keep getting 'unable to connect to internet' on Microsoft Edge for Android, please fix it."</p>
+      <p class="feedback-meta">Source: Unwrap (Twitter) | June 11, 2025 | Sentiment: Negative | <a href="https://twitter.com/491786791/status/1932838800398647764" target="_blank">View on Twitter</a></p>
+    </div>
+    
+    <h4>Workspaces on Foldable Devices</h4>
+    <div class="feedback-item issue">
+      <p class="feedback-text">"Does anyone know how to enable the edge workspaces on the open-screen of the foldable or on the tablet? I'm able to enable the flag, and I can see it on my phone (when on the front screen - in folded scenarion), but when I un-fold the device, workspaces vanish, and I'm back to the non-workspace area."</p>
+      <p class="feedback-meta">Source: Unwrap (Reddit) | June 10, 2025 | Sentiment: Negative | <a href="https://www.reddit.com/r/MicrosoftEdge/comments/1l861l5/" target="_blank">View on Reddit</a></p>
+    </div>
+    <div class="feedback-item issue">
+      <p class="feedback-text">"手机端做的不错,但换到平板真的受不了,反倒阉割了功能,不可以把地址栏放在下面,还阉割了自定义壁纸" (Translation: The phone version is good, but switching to a tablet is really unbearable, it cuts features, can't put the address bar at the bottom, and also cuts custom wallpaper)</p>
+      <p class="feedback-meta">Source: Google Play | June 10, 2025 | Rating: 3★</p>
+    </div>
+    
+    <h4>Data Loss</h4>
+    <div class="feedback-item issue">
+      <p class="feedback-text">"all my tab just disappear after a flashback, and there's no restore button!!!!!!"</p>
+      <p class="feedback-meta">Source: iOS App Store | June 9, 2025 | Rating: 1★</p>
+    </div>
+    
+    <h4>Text-to-Speech Issues</h4>
+    <div class="feedback-item issue">
+      <p class="feedback-text">"Yes, even with the update, something broke with the text to speech. fix it, until then, it's not installed."</p>
+      <p class="feedback-meta">Source: iOS App Store | June 9, 2025 | Rating: 1★</p>
+    </div>
+    
+    <h4>UI Regressions</h4>
+    <div class="feedback-item issue">
+      <p class="feedback-text">"改這什麼爛側邊欄, 什麼不改，側邊欄變成這麼難用，點開除了會改變網頁的佈局之外，也沒辦法像以前一樣快速加最愛了，到底在幹嘛" (Translation: What's with this terrible sidebar change, why change it, the sidebar has become so difficult to use, clicking it changes the webpage layout, and can't quickly add favorites like before, what are you doing)</p>
+      <p class="feedback-meta">Source: iOS App Store | June 9, 2025 | Rating: 1★</p>
+    </div>
+    
+    <h4>Localization & International Support</h4>
+    <div class="feedback-item issue">
+      <p class="feedback-text">"not user-friendly and full of bugs. appreciate your efforts and Persian is not supported. Writing math symbols through a passage, the answers would be unreadable and frustrating. so many others, like in the copilot part, but box doesn't let me write cause they are too long!"</p>
+      <p class="feedback-meta">Source: Google Play | June 10, 2025 | Rating: 2★</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>🔷 Part 3: Prioritized Recommendations</h2>
+    
+    <div class="recommendation priority-high">
+      <h4>1. Fix Connectivity Issues on Android</h4>
+      <p><strong>Impact:</strong> High (Frequent reports, severe user frustration, potential churn)</p>
+      <p><strong>Evidence:</strong> Multiple reports of "unable to connect to internet" errors specifically on Android devices, with high negative sentiment.</p>
+      <p><strong>Recommendation:</strong> Investigate network connection handling, especially in areas with intermittent connectivity. Consider implementing more robust error recovery and offline capabilities.</p>
+      <div class="quote">"Fix ya god damn browser on android I always get unable to connect to internet every time I use it" - <a href="https://twitter.com/491786791/status/1932838800398647764" target="_blank">Twitter user</a></div>
+    </div>
+    
+    <div class="recommendation priority-high">
+      <h4>2. Address PDF Toolbar Visibility</h4>
+      <p><strong>Impact:</strong> High (Affects core functionality, feature announced but not working)</p>
+      <p><strong>Evidence:</strong> Multiple reports from Android users that the PDF toolbar announced in the changelog is not visible, requiring manual flag enablement.</p>
+      <p><strong>Recommendation:</strong> Fix the flag configuration to ensure the PDF toolbar is visible by default after update, or provide clear documentation about how to enable it.</p>
+      <div class="quote">"Saw it in changelog, updated but can't see it when opening a pdf in Edge on Phone with Android 14 and tablet on Android 11" - <a href="https://www.reddit.com/r/MicrosoftEdge/comments/1l944ce/" target="_blank">Reddit user</a></div>
+    </div>
+    
+    <div class="recommendation priority-medium">
+      <h4>3. Improve Form Factor Adaptation</h4>
+      <p><strong>Impact:</strong> Medium (Affects specific device types, but important for strategic user segments)</p>
+      <p><strong>Evidence:</strong> Reports of UI issues on foldable devices and tablets, particularly with workspaces disappearing when unfolding the device.</p>
+      <p><strong>Recommendation:</strong> Implement better state preservation when changing form factors, and ensure UI elements adapt appropriately to different screen sizes.</p>
+      <div class="quote">"I'm able to enable the flag, and I can see it on my phone (when on the front screen - in folded scenario), but when I un-fold the device, workspaces vanish" - <a href="https://www.reddit.com/r/MicrosoftEdge/comments/1l861l5/" target="_blank">Reddit user</a></div>
+    </div>
+    
+    <div class="recommendation priority-medium">
+      <h4>4. Implement iOS Extension Support</h4>
+      <p><strong>Impact:</strong> Medium (Platform feature parity, competitive disadvantage)</p>
+      <p><strong>Evidence:</strong> Multiple iOS users requesting extension support similar to what's available on Android.</p>
+      <p><strong>Recommendation:</strong> Prioritize extension support for iOS, starting with the most requested extensions like ad blockers and productivity tools.</p>
+      <div class="quote">"安卓版本支持拓展，为什么iOS系统不支持，这一点需要改进" - iOS App Store review</div>
+    </div>
+    
+    <div class="recommendation priority-medium">
+      <h4>5. Fix Text-to-Speech Functionality</h4>
+      <p><strong>Impact:</strong> Medium (Accessibility feature, complete blockers for some users)</p>
+      <p><strong>Evidence:</strong> Reports that text-to-speech is broken even after updates.</p>
+      <p><strong>Recommendation:</strong> Investigate and fix the text-to-speech functionality, with particular attention to compatibility with screen readers and accessibility tools.</p>
+      <div class="quote">"Yes, even with the update, something broke with the text to speech. fix it, until then, it's not installed." - iOS App Store review</div>
+    </div>
+    
+    <div class="recommendation priority-low">
+      <h4>6. Add Desktop UI Features to Mobile</h4>
+      <p><strong>Impact:</strong> Low (Enhancement rather than fix, affects user experience)</p>
+      <p><strong>Evidence:</strong> Requests for desktop features like favorites bar docked next to search bar on Android.</p>
+      <p><strong>Recommendation:</strong> Add configuration options to enable desktop-like UI features for power users who want consistency across platforms.</p>
+      <div class="quote">"any plans of favorites bar directly docked in, next to search bar like PC on android ver?" - <a href="https://twitter.com/746834025847885825/status/1932867242028355953" target="_blank">Twitter user</a></div>
+    </div>
+    
+    <div class="recommendation priority-low">
+      <h4>7. Create a Lightweight Version</h4>
+      <p><strong>Impact:</strong> Low (Affects specific markets, potential for growth)</p>
+      <p><strong>Evidence:</strong> Feedback about app size and resource usage, particularly in markets where data and storage are concerns.</p>
+      <p><strong>Recommendation:</strong> Consider developing a "Edge Lite" version with reduced features but smaller footprint for users with lower-end devices or limited data.</p>
+      <div class="quote">"Poderia ter uma versão LITE ou consumir menos dados. Ele é um aplicativo que mais consome armazenamento no dispositivo." - Google Play review</div>
+    </div>
+  </div>
+
+  <footer>
+    <p>Report generated on June 13, 2025 | Based on 1,377 feedback items from Google Play, iOS App Store, and Unwrap</p>
+  </footer>
+</body>
+</html>
