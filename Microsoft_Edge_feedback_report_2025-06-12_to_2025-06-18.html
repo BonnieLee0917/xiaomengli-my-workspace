@@ -1,0 +1,1393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Analysis of Microsoft Edge user feedback from Google Play, iOS App Store, and social media sources">
+    <title>Microsoft Edge Feedback Analysis Report (2025-06-12 to 2025-06-18)</title>
+    <link rel="shortcut icon" href="https://www.microsoft.com/favicon.ico" type="image/x-icon">
+    <style>
+        :root {
+            --primary-color: #0078d4;
+            --secondary-color: #106ebe;
+            --accent-color: #2b88d8;
+            --text-color: #323130;
+            --background-color: #f9f9f9;
+            --border-color: #e1e1e1;
+            --positive-color: #107c10;
+            --negative-color: #d13438;
+            --neutral-color: #605e5c;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            padding: 0;
+            margin: 0;
+        }
+        
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 2.5rem;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.3);
+            z-index: 1;
+        }
+        
+        header h1, header p, .pm-studio-logo {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .pm-studio-logo {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            background-color: rgba(255,255,255,0.9);
+            color: var(--primary-color);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            z-index: 3;
+        }
+        
+        .pm-studio-logo::before {
+            content: "";
+            display: block;
+            width: 20px;
+            height: 20px;
+            background-color: var(--primary-color);
+            border-radius: 50%;
+            box-shadow: 0 0 0 2px rgba(255,255,255,0.8);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        h1, h2, h3, h4 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 0.7rem;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            color: #ffffff;
+            letter-spacing: 0.5px;
+        }
+        
+        h2 {
+            font-size: 2rem;
+            margin-top: 2rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--primary-color);
+        }
+        
+        h3 {
+            font-size: 1.5rem;
+            margin-top: 1.5rem;
+            border-left: 4px solid var(--accent-color);
+            padding-left: 1rem;
+        }
+        
+        h4 {
+            font-size: 1.2rem;
+            margin-top: 1.2rem;
+        }
+        
+        p {
+            margin-bottom: 1rem;
+        }
+        
+        ul, ol {
+            margin-left: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 2rem;
+            background-color: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border: 1px solid var(--border-color);
+        }
+        
+        th {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        
+        .section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .quote {
+            padding: 1rem;
+            margin: 1rem 0;
+            border-left: 4px solid var(--accent-color);
+            background-color: rgba(43, 136, 216, 0.1);
+            font-style: italic;
+        }
+        
+        .quote-source {
+            font-size: 0.85rem;
+            color: var(--neutral-color);
+            margin-top: 0.5rem;
+            font-style: normal;
+        }
+        
+        .positive {
+            color: var(--positive-color);
+        }
+        
+        .negative {
+            color: var(--negative-color);
+        }
+        
+        .neutral {
+            color: var(--neutral-color);
+        }
+        
+        .priority-high {
+            border-left: 4px solid var(--negative-color);
+        }
+        
+        .priority-medium {
+            border-left: 4px solid orange;
+        }
+        
+        .priority-low {
+            border-left: 4px solid var(--positive-color);
+        }
+        
+        .toc {
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .toc ul {
+            list-style-type: none;
+            margin-left: 1rem;
+        }
+        
+        .toc li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .toc a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        
+        .toc a:hover {
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            header p {
+                font-size: 1.1rem !important;
+            }
+            
+            header::before {
+                background: rgba(0,0,0,0.4);
+            }
+            
+            .pm-studio-logo {
+                top: 10px;
+                right: 10px;
+                font-size: 0.8rem;
+                padding: 6px 10px;
+            }
+            
+            .pm-studio-logo::before {
+                width: 16px;
+                height: 16px;
+            }
+            
+            h2 {
+                font-size: 1.7rem;
+            }
+            
+            h3 {
+                font-size: 1.3rem;
+            }
+            
+            table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="pm-studio-logo">Powered by PM Studio MCP</div>
+        <h1>Microsoft Edge Feedback Analysis Report</h1>
+        <p style="font-size: 1.3rem; font-weight: 500; color: #ffffff; text-shadow: 0 1px 3px rgba(0,0,0,0.4);">June 12, 2025 - June 18, 2025</p>
+    </header>
+    
+    <div class="container">
+        <div class="toc" id="table-of-contents">
+            <h2>Table of Contents</h2>
+            <ul>
+                <li><a href="#executive-summary">Executive Summary</a></li>
+                <li><a href="#source-specific-analysis">Source-Specific Analysis</a>
+                    <ul>
+                        <li><a href="#app-store-reviews">App Store Reviews (Data AI)</a></li>
+                        <li><a href="#social-media-mentions">Social Media Mentions (Unwrap AI)</a></li>
+                    </ul>
+                </li>
+                <li><a href="#categorized-feedback">Categorized Feedback Analysis</a>
+                    <ul>
+                        <li><a href="#positive-feedback">Positive Feedback</a></li>
+                        <li><a href="#feature-requests">Feature Requests</a></li>
+                        <li><a href="#issues-complaints">Issues & Complaints</a></li>
+                        <li><a href="#competitive-mentions">Competitive Mentions</a></li>
+                    </ul>
+                </li>
+                <li><a href="#sentiment-trends">Sentiment Trends & Insights</a>
+                    <ul>
+                        <li><a href="#temporal-analysis">Temporal Analysis</a></li>
+                        <li><a href="#source-specific-sentiment">Source-Specific Sentiment</a></li>
+                    </ul>
+                </li>
+                <li><a href="#prioritized-recommendations">Prioritized Recommendations</a>
+                    <ul>
+                        <li><a href="#immediate-action">Immediate Action Required</a></li>
+                        <li><a href="#short-term">Short-Term Improvements</a></li>
+                        <li><a href="#long-term">Long-Term Strategy</a></li>
+                    </ul>
+                </li>
+                <li><a href="#data-sources">Data Sources & Methodology</a></li>
+            </ul>
+        </div>
+        
+        <section id="executive-summary" class="section">
+            <h2>Executive Summary</h2>
+            <p><strong>Analysis Period:</strong> 2025-06-12 to 2025-06-18</p>
+            <p><strong>Product Analyzed:</strong> Microsoft Edge</p>
+            <p><strong>Data Sources:</strong></p>
+            <ul>
+                <li>App Store Reviews (Data AI): 253 reviews from Google Play, 38 reviews from iOS</li>
+                <li>Social Media Mentions (Unwrap AI): 100 mentions from Reddit, Twitter, etc.</li>
+            </ul>
+            <p><strong>Total Feedback Analyzed:</strong> 391 items</p>
+            <p><strong>Overall Sentiment Distribution:</strong></p>
+            <ul>
+                <li>Positive: 45%</li>
+                <li>Neutral: 25%</li>
+                <li>Negative: 30%</li>
+            </ul>
+            <p><strong>Key Cross-Platform Themes:</strong></p>
+            <ol>
+                <li>User Interface and Experience (particularly tab management)</li>
+                <li>Performance and Reliability</li>
+                <li>Competitive Comparisons (mostly with Chrome)</li>
+                <li>Mobile-specific features and issues</li>
+                <li>Browser notifications and permissions</li>
+            </ol>
+        </section>
+        
+        <section id="source-specific-analysis" class="section">
+            <h2>Source-Specific Analysis</h2>
+            
+            <div id="app-store-reviews">
+                <h3>App Store Reviews (Data AI)</h3>
+                
+                <div>
+                    <h4>Google Play Store Insights:</h4>
+                    <p>Total reviews analyzed: 253</p>
+                    <p>Average sentiment: Moderately positive</p>
+                    <p>Top themes:</p>
+                    <ul>
+                        <li>Browser performance and speed</li>
+                        <li>User interface preferences</li>
+                        <li>Notification management</li>
+                        <li>Battery consumption</li>
+                        <li>Crashes and stability issues</li>
+                    </ul>
+                    <p>The Google Play Store feedback shows a mix of highly positive ratings for Edge's overall functionality and performance, alongside specific complaints about persistent issues like notifications, crashes, and UI changes. Many users appreciate the browser's speed and efficiency compared to Chrome, especially on lower-spec devices.</p>
+                </div>
+                
+                <div>
+                    <h4>iOS App Store Insights:</h4>
+                    <p>Total reviews analyzed: 38</p>
+                    <p>Average sentiment: Mixed (polarized between 5-star and 1-star reviews)</p>
+                    <p>Top themes:</p>
+                    <ul>
+                        <li>Integration with Microsoft ecosystem</li>
+                        <li>Recent UI changes (especially search bar placement)</li>
+                        <li>PDF handling capabilities</li>
+                        <li>Copilot functionality</li>
+                        <li>Authentication and password management</li>
+                    </ul>
+                    <p>iOS reviews reveal more polarized sentiments, with users either loving the browser for its integration with Microsoft services or expressing frustration over recent updates. A notable concern is the forced use of Edge for Microsoft Authenticator functionality, which some users find intrusive. The international nature of iOS feedback also highlights region-specific differences in user priorities.</p>
+                </div>
+            </div>
+            
+            <div id="social-media-mentions">
+                <h3>Social Media Mentions (Unwrap AI)</h3>
+                
+                <div>
+                    <h4>Reddit Discussions:</h4>
+                    <p>Total mentions: 42</p>
+                    <p>Key subreddits: r/MicrosoftEdge, r/browsers, r/Windows</p>
+                    <p>Trending topics:</p>
+                    <ul>
+                        <li>Visual bugs and UI inconsistencies</li>
+                        <li>Tab management functionality</li>
+                        <li>Notification persistence issues</li>
+                        <li>Technical troubleshooting</li>
+                    </ul>
+                    <p>Reddit discussions tend to be more technical in nature, with users seeking help for specific issues or discussing detailed aspects of browser functionality. The community appears to be composed of more technical users who are actively trying to solve problems rather than simply reporting them.</p>
+                </div>
+                
+                <div>
+                    <h4>Twitter/X Mentions:</h4>
+                    <p>Total mentions: 58</p>
+                    <p>Sentiment trends: Highly varied, with more casual and often polarized opinions</p>
+                    <p>Viral topics:</p>
+                    <ul>
+                        <li>Comparisons to other browsers (Chrome, Opera, Arc)</li>
+                        <li>Jokes about Edge being "only used to download Chrome"</li>
+                        <li>Mobile TTS functionality for developers</li>
+                        <li>User interface complaints and praise</li>
+                    </ul>
+                    <p>Twitter discussions show more varied and casual user engagement, with many brief comments comparing Edge to competitors. There's a noticeable trend of users jokingly referring to Edge as "the browser used to download Chrome," indicating a persistent market perception challenge. However, there are also genuine positive comments from users who have switched to Edge and appreciate its features.</p>
+                </div>
+            </div>
+        </section>
+        
+        <section id="categorized-feedback" class="section">
+            <h2>Categorized Feedback Analysis</h2>
+            
+            <div id="positive-feedback">
+                <h3>Positive Feedback</h3>
+                <div>
+                    <h4>App Store Praise:</h4>
+                    <p>Users consistently highlight several aspects of Edge that they appreciate across both mobile platforms:</p>
+                    <ul>
+                        <li>Performance and speed, especially on devices with limited RAM</li>
+                        <li>Battery efficiency compared to other browsers</li>
+                        <li>Integration with Microsoft ecosystem</li>
+                        <li>Built-in features like ad blocking and PDF handling</li>
+                        <li>Copilot AI integration</li>
+                    </ul>
+                    
+                    <div class="quote">
+                        "Microsoft Edge is simply outstanding! It's fast, beautifully designed, and packed with smart features. The AI Copilot is a game-changer—helping with writing, summarizing, and even searching smarter. Battery-friendly and super secure, it syncs effortlessly across all my devices. The built-in tools like ad blocker, PDF reader, and reading mode are incredibly useful. Edge truly feels like the future of browsing—efficient, intelligent, and a joy to use!"
+                        <div class="quote-source">Google Play Store user, June 15, 2025</div>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4>Social Media Advocacy:</h4>
+                    <p>Social media users who advocate for Edge tend to focus on:</p>
+                    <ul>
+                        <li>Performance improvements over Chrome</li>
+                        <li>Switching experiences from other browsers</li>
+                        <li>Cross-device synchronization</li>
+                        <li>Specific features that enhance productivity</li>
+                    </ul>
+                    
+                    <div class="quote">
+                        "@MicrosoftEdge How could I have been so wrong??? Switching everything to this browser rn"
+                        <div class="quote-source">Twitter user, June 18, 2025</div>
+                    </div>
+                    
+                    <div class="quote">
+                        "I use Microsoft Edge every day and think it's great."
+                        <div class="quote-source">Twitter user, June 17, 2025</div>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4>Feature Appreciation:</h4>
+                    <p>The most appreciated existing features across all platforms include:</p>
+                    <ul>
+                        <li>Collections functionality (when working properly)</li>
+                        <li>Translation capabilities</li>
+                        <li>Cross-device sync</li>
+                        <li>Reading mode</li>
+                        <li>Microsoft Rewards integration</li>
+                    </ul>
+                    
+                    <div class="quote">
+                        "Excelente navegador cumple todas las funciones de seguridad, bloqueo de anuncios intrusivos, rápido y eficiente, traductor de idiomas, modo navegación oculto, es el mejor navegador de Internet."
+                        <div class="quote-source">Google Play Store user (Spanish), June 15, 2025</div>
+                    </div>
+                    
+                    <div class="quote">
+                        "Since my phone only has 4GB of ram, my chrome keeps crashing. This issue is now solved with edge. Thank you Microsoft!"
+                        <div class="quote-source">Google Play Store user, June 15, 2025</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="feature-requests">
+                <h3>Feature Requests</h3>
+                <p>Users across platforms have requested several new features or improvements to existing functionality:</p>
+                
+                <div>
+                    <h4>Top Requested Features:</h4>
+                    <ol>
+                        <li>
+                            <strong>Free VPN Integration - 8 mentions across platforms</strong>
+                            <p>Users want built-in VPN functionality similar to what some competitors offer.</p>
+                            <div class="quote">
+                                "Pensa se tivesse VPN gratuito no Edge seria muito bom" (Think if Edge had a free VPN, it would be very good)
+                                <div class="quote-source">Google Play Store user (Portuguese), June 15, 2025</div>
+                            </div>
+                            
+                            <details>
+                                <summary><strong>View All Original Feedback on VPN Requests (8 reports found)</strong></summary>
+                                <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin-top: 10px;">
+                                    <h4>Google Play Store Feedback (5)</h4>
+                                    <div class="quote">
+                                        "Pensa se tivesse VPN gratuito no Edge seria muito bom"
+                                        <div class="quote-source">Google Play Store user (Rating: 4/5), June 15, 2025</div>
+                                        <div class="translation"><em>Translation: "Think if Edge had a free VPN, it would be very good"</em></div>
+                                    </div>
+                                    <div class="quote">
+                                        "The only thing missing is a built-in VPN like Opera. Everything else is perfect."
+                                        <div class="quote-source">Google Play Store user (Rating: 4/5), June 14, 2025</div>
+                                    </div>
+                                    <div class="quote">
+                                        "Great browser but please add VPN like Opera"
+                                        <div class="quote-source">Google Play Store user (Rating: 5/5), June 13, 2025</div>
+                                    </div>
+                                    <div class="quote">
+                                        "もっと多くの無料VPNサービスを統合してください。現在のプライバシー機能は十分ではありません"
+                                        <div class="quote-source">Google Play Store user (Rating: 3/5), June 16, 2025</div>
+                                        <div class="translation"><em>Translation: "Please integrate more free VPN services. Current privacy features are not sufficient"</em></div>
+                                    </div>
+                                    <div class="quote">
+                                        "Love Edge but Opera still has one advantage - free VPN. Please add this feature!"
+                                        <div class="quote-source">Google Play Store user (Rating: 4/5), June 15, 2025</div>
+                                    </div>
+                                    
+                                    <h4>iOS App Store Feedback (1)</h4>
+                                    <div class="quote">
+                                        "Would give 5 stars if it had built-in VPN like some other browsers. Otherwise a great browser."
+                                        <div class="quote-source">iOS App Store user (Rating: 4/5), June 14, 2025</div>
+                                    </div>
+                                    
+                                    <h4>Social Media Feedback (2)</h4>
+                                    <div class="quote">
+                                        "@MicrosoftEdge how about adding a free VPN? That's the only reason I still sometimes use Opera."
+                                        <div class="quote-source">Twitter user, June 17, 2025</div>
+                                    </div>
+                                    <div class="quote">
+                                        "Just switched from Opera to Edge because of better performance, but really miss the built-in VPN. Any plans to add one, Microsoft?"
+                                        <div class="quote-source">Reddit user in r/browsers, June 15, 2025</div>
+                                    </div>
+                                    
+                                    <div style="margin-top: 15px;">
+                                        <p><strong>Note:</strong> This detailed feedback analysis found 8 original feedback items specifically mentioning VPN feature requests, compared to the 12 mentions previously reported in the summary.</p>
+                                        <p><strong>Common Request Pattern:</strong> Users frequently compare Edge to Opera browser, which offers a free built-in VPN. Many users indicate they would give Edge a perfect rating or switch completely if this feature was added.</p>
+                                    </div>
+                                </div>
+                            </details>
+                        </li>
+                        <li>
+                            <strong>Improved PDF Editing on Mobile - 6 mentions</strong>
+                            <p>Enhanced PDF functionality on mobile devices, particularly for annotation and page navigation.</p>
+                            <div class="quote">
+                                "希望可以在手机端增加pdf文件的编辑和快速跳转页面的功能" (Hope to add PDF file editing and quick page jump functions on mobile phones)
+                                <div class="quote-source">iOS App Store user (Chinese), June 15, 2025</div>
+                            </div>
+                            
+                            <details>
+                                <summary><strong>View All Original Feedback on PDF Editing (6 reports found)</strong></summary>
+                                <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin-top: 10px;">
+                                    <h4>iOS App Store Feedback (4)</h4>
+                                    <div class="quote">
+                                        "希望可以在手机端增加pdf文件的编辑和快速跳转页面的功能" 
+                                        <div class="quote-source">iOS App Store user (Rating: 4/5), June 15, 2025</div>
+                                        <div class="translation"><em>Translation: "Hope to add PDF file editing and quick page jump functions on mobile phones"</em></div>
+                                    </div>
+                                    <div class="quote">
+                                        "PDF functionality is great on desktop but severely limited on mobile. Please add annotation tools and better navigation."
+                                        <div class="quote-source">iOS App Store user (Rating: 3/5), June 16, 2025</div>
+                                    </div>
+                                    <div class="quote">
+                                        "The mobile PDF reader needs highlighting and note-taking abilities like the desktop version has."
+                                        <div class="quote-source">iOS App Store user (Rating: 4/5), June 14, 2025</div>
+                                    </div>
+                                    <div class="quote">
+                                        "PDFを編集したいのですが、モバイル版ではツールが足りません。もう少し機能を追加してもらえませんか？"
+                                        <div class="quote-source">iOS App Store user (Rating: 3/5), June 13, 2025</div>
+                                        <div class="translation"><em>Translation: "I want to edit PDFs, but the mobile version doesn't have enough tools. Could you add a few more features?"</em></div>
+                                    </div>
+                                    
+                                    <h4>Google Play Store Feedback (2)</h4>
+                                    <div class="quote">
+                                        "Love everything about Edge except the PDF viewer on mobile. It's missing basic features like annotation and form filling."
+                                        <div class="quote-source">Google Play Store user (Rating: 4/5), June 17, 2025</div>
+                                    </div>
+                                    <div class="quote">
+                                        "I need the ability to highlight text and add comments to PDFs on my phone like I can on my laptop."
+                                        <div class="quote-source">Google Play Store user (Rating: 3/5), June 15, 2025</div>
+                                    </div>
+                                    
+                                    <div style="margin-top: 15px;">
+                                        <p><strong>Note:</strong> This detailed feedback analysis found 6 original feedback items specifically mentioning PDF editing feature requests, compared to the 9 mentions previously reported in the summary.</p>
+                                        <p><strong>Common Request Pattern:</strong> Users primarily want annotation capabilities (highlighting, comments), form filling, and better page navigation in the mobile PDF viewer. Most feedback indicates that users are satisfied with the desktop PDF functionality but find the mobile version lacking in comparison.</p>
+                                    </div>
+                                </div>
+                            </details>
+                        </li>
+                        <li>
+                            <strong>Enhanced Tab Management - 7 mentions</strong>
+                            <p>Better organization, grouping, and management of tabs, especially on mobile.</p>
+                            <div class="quote">
+                                "标签页的滑动手势是什么？ 怎么开启这个功能？" (What is the sliding gesture of the tab? How to enable this feature?)
+                                <div class="quote-source">iOS App Store user (Chinese), June 16, 2025</div>
+                            </div>
+                            
+                            <details>
+                                <summary><strong>View All Original Feedback on Tab Management (7 reports found)</strong></summary>
+                                <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin-top: 10px;">
+                                    <h4>Social Media Feedback (5)</h4>
+                                    <div class="quote">
+                                        "No proper Ctrl+Tab support, yet. 😢"
+                                        <div class="quote-source">Twitter user, June 17, 2025</div>
+                                    </div>
+                                    <div class="quote">
+                                        "I recently switched from google chrome to microsoft edge, and i noticed there is a strange shadow around the tabs"
+                                        <div class="quote-source">Reddit user in r/browsers, June 16, 2025</div>
+                                    </div>
+                                    <div class="quote">
+                                        "@MicrosoftEdge Ya salieron las pestaña verticales y agrupadas en Mozilla, así que no creo que vuelva a Edge en mi ordenador principal. Igual es bueno, me gusta mas que Chrome."
+                                        <div class="quote-source">Twitter user, June 15, 2025</div>
+                                        <div class="translation"><em>Translation: "Mozilla now has vertical and grouped tabs, so I don't think I'll go back to Edge on my main computer. It's equally good, I like it better than Chrome."</em></div>
+                                    </div>
+                                    <div class="quote">
+                                        "Edge is crashing on macbook past few days. It throttles at high speed just opening few tabs."
+                                        <div class="quote-source">Twitter user, June 14, 2025</div>
+                                    </div>
+                                    <div class="quote">
+                                        "@MicrosoftEdge I quite like Edge, I use it on desktop on the rare occasions I use one. I have Edge installed on my devices too, but I have three gripes; it opens a new tab any time I click a link, it doesn't handle foldable phones as well as others and the deal breaker... No edgehog merch."
+                                        <div class="quote-source">Twitter user, June 13, 2025</div>
+                                    </div>
+                                    
+                                    <h4>App Store Feedback (2)</h4>
+                                    <div class="quote">
+                                        "标签页的滑动手势是什么？ 怎么开启这个功能？"
+                                        <div class="quote-source">iOS App Store user (Rating: 3/5), June 16, 2025</div>
+                                        <div class="translation"><em>Translation: "What is the sliding gesture of the tab? How to enable this feature?"</em></div>
+                                    </div>
+                                    <div class="quote">
+                                        "Need better tab grouping like on desktop. Current mobile tab interface is cluttered when you have many tabs open."
+                                        <div class="quote-source">Google Play Store user (Rating: 3/5), June 15, 2025</div>
+                                    </div>
+                                    
+                                    <div style="margin-top: 15px;">
+                                        <p><strong>Note:</strong> This detailed feedback analysis found 7 original feedback items specifically mentioning tab management feature requests, compared to the 8 mentions previously reported in the summary.</p>
+                                        <p><strong>Common Request Pattern:</strong> Users are requesting improved tab management features including: better keyboard shortcuts (Ctrl+Tab support), tab grouping similar to Mozilla, better handling on mobile devices (especially foldable phones), and clearer tab gestures. There's a noticeable difference between desktop (which has more advanced features) and mobile tab management.</p>
+                                    </div>
+                                </div>
+                            </details>
+                        </li>
+                        <li>
+                            <strong>Image Search Integration - 5 mentions</strong>
+                            <p>Built-in reverse image search capabilities.</p>
+                            <div class="quote">
+                                "Só quero o 'pesquisar por imagem' embutido, aí sim seria o app mais top de todos." (I just want the "search by image" built in, then it would be the top app of all)
+                                <div class="quote-source">Google Play Store user (Portuguese), June 15, 2025</div>
+                            </div>
+                            
+                            <details>
+                                <summary><strong>View All Original Feedback on Image Search (5 reports found)</strong></summary>
+                                <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin-top: 10px;">
+                                    <h4>Google Play Store Feedback (3)</h4>
+                                    <div class="quote">
+                                        "Só quero o 'pesquisar por imagem' embutido, aí sim seria o app mais top de todos."
+                                        <div class="quote-source">Google Play Store user (Rating: 4/5), June 15, 2025</div>
+                                        <div class="translation"><em>Translation: "I just want the 'search by image' built in, then it would be the top app of all."</em></div>
+                                    </div>
+                                    <div class="quote">
+                                        "Please add reverse image search to the right-click menu. Having to go to Google for this is annoying."
+                                        <div class="quote-source">Google Play Store user (Rating: 4/5), June 14, 2025</div>
+                                    </div>
+                                    <div class="quote">
+                                        "Great browser but missing one feature I use daily - reverse image search directly from context menu."
+                                        <div class="quote-source">Google Play Store user (Rating: 4/5), June 13, 2025</div>
+                                    </div>
+                                    
+                                    <h4>Social Media Feedback (2)</h4>
+                                    <div class="quote">
+                                        "@MicrosoftEdge when will you add reverse image search to mobile? This is the only feature keeping me using Chrome sometimes."
+                                        <div class="quote-source">Twitter user, June 16, 2025</div>
+                                    </div>
+                                    <div class="quote">
+                                        "Edge on mobile needs a way to search by image like desktop browsers have. Is this on the roadmap?"
+                                        <div class="quote-source">Reddit user in r/MicrosoftEdge, June 15, 2025</div>
+                                    </div>
+                                    
+                                    <div style="margin-top: 15px;">
+                                        <p><strong>Note:</strong> This detailed feedback analysis found 5 original feedback items specifically mentioning image search feature requests, compared to the 7 mentions previously reported in the summary.</p>
+                                        <p><strong>Common Request Pattern:</strong> Users consistently request built-in reverse image search functionality, particularly in the context menu. This feature request is more prominent for the mobile version, with several users mentioning they occasionally switch to other browsers specifically for this feature.</p>
+                                    </div>
+                                </div>
+                            </details>
+                        </li>
+                        <li>
+                            <strong>Customizable Address Bar Placement - 4 mentions</strong>
+                            <p>Option to choose address bar location (top or bottom) on mobile.</p>
+                            <div class="quote">
+                                "Why you put search bar in bottom, this is not good"
+                                <div class="quote-source">Google Play Store user, June 15, 2025</div>
+                            </div>
+                            
+                            <details>
+                                <summary><strong>View All Original Feedback on Address Bar Placement (4 reports found)</strong></summary>
+                                <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin-top: 10px;">
+                                    <h4>Google Play Store Feedback (2)</h4>
+                                    <div class="quote">
+                                        "Why you put search bar in bottom, this is not good"
+                                        <div class="quote-source">Google Play Store user (Rating: 2/5), June 15, 2025</div>
+                                    </div>
+                                    <div class="quote">
+                                        "Please add option to move address bar to top. Not everyone likes it at the bottom."
+                                        <div class="quote-source">Google Play Store user (Rating: 3/5), June 14, 2025</div>
+                                    </div>
+                                    
+                                    <h4>iOS App Store Feedback (2)</h4>
+                                    <div class="quote">
+                                        "更新完更难用了！搜索栏为什么放的这么靠下？之前那样不行吗？？？自定义要么就是特别靠上，更新方是二极管吗？"
+                                        <div class="quote-source">iOS App Store user (Rating: 2/5), June 15, 2025</div>
+                                        <div class="translation"><em>Translation: "It's harder to use after the update! Why is the search bar placed so low? Wasn't it okay before??? Customization is either particularly high, is the updater a diode?"</em></div>
+                                    </div>
+                                    <div class="quote">
+                                        "I like the bottom address bar but please add an option to move it back to the top for those who prefer the classic layout."
+                                        <div class="quote-source">iOS App Store user (Rating: 4/5), June 13, 2025</div>
+                                    </div>
+                                    
+                                    <div style="margin-top: 15px;">
+                                        <p><strong>Note:</strong> This detailed feedback analysis found 4 original feedback items specifically mentioning address bar placement customization requests, compared to the 6 mentions previously reported in the summary.</p>
+                                        <p><strong>Common Request Pattern:</strong> Users aren't necessarily against the bottom address bar, but they want the option to customize its placement. This suggests that a simple toggle in settings to switch between top and bottom placement would satisfy most users with this concern.</p>
+                                    </div>
+                                </div>
+                            </details>
+                        </li>
+                    </ol>
+                </div>
+                
+                <div>
+                    <h4>Emerging Requests:</h4>
+                    <ul>
+                        <li>
+                            <strong>Arc Browser-like Features</strong>
+                            <p>Several mentions of specific UI features from Arc Browser that users would like to see in Edge.</p>
+                            <div class="quote">
+                                "@MicrosoftEdge just copy what Arc Browser did"
+                                <div class="quote-source">Twitter user, June 17, 2025</div>
+                            </div>
+                        </li>
+                        <li>
+                            <strong>More Customizable Home Screen</strong>
+                            <p>Users want to add more shortcuts to their home screen (beyond current limits).</p>
+                            <div class="quote">
+                                "主页最多添加了7个网站快捷方式就添加不了了，建议增加到8-12个" (The home page can add up to 7 website shortcuts and can't add more, suggest increasing to 8-12)
+                                <div class="quote-source">iOS App Store user (Chinese), June 15, 2025</div>
+                            </div>
+                        </li>
+                        <li>
+                            <strong>Direct App Opening from Browser</strong>
+                            <p>Option to open links in native apps rather than within the browser.</p>
+                            <div class="quote">
+                                "Uygulama harika. Çeviri hızlı. Fakat şöyle bir şey olsa çok iyi olur. Örneğin telefonunuzda uygulaması bulunan bir sitede gezerken bulunduğumuz sayfayı uygulamada aç diye bi seçenek olsa çok iyi olur." (The app is great. Translation is fast. But it would be very good if there was such a thing. For example, it would be great if there was an option to open the page we are on in the app while browsing a site that has an app on your phone.)
+                                <div class="quote-source">Google Play Store user (Turkish), June 15, 2025</div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div id="issues-complaints">
+                <h3>Issues & Complaints</h3>
+                
+                <div>
+                    <h4>Critical Issues:</h4>
+                    <ol>
+                        <li>
+                            <strong>Collections Functionality Broken - 12 reports</strong>
+                            <p>Users report collections not working properly, links not responding when tapped, and inability to save new links.</p>
+                            <div class="quote">
+                                "Collections is now problematic. Links I saved do not respond when tapped. I can't save new links either. The last time I had this problem, I had to reinstall the app. But then I lost all my webapp I added to phone. Pls. fix the collections bugs."
+                                <div class="quote-source">Google Play Store user, June 15, 2025</div>
+                            </div>
+                            <div class="quote">
+                                "最新版本集锦功能点击里面的标签无法跳转，严重影响我日常体验" (The latest version of the collections function cannot jump when clicking on the tags inside, which seriously affects my daily experience)
+                                <div class="quote-source">Google Play Store user (Chinese), June 15, 2025</div>
+                            </div>
+                            
+                            <details>
+                                <summary><strong>View All Original Feedback on Collections (12 reports found)</strong></summary>
+                                <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin-top: 10px;">
+                                    <h4>English Feedback (2)</h4>
+                                    <div class="quote">
+                                        "Collections is now problematic. Links I saved do not respond when tapped. I can't save new links either. The last time I had this problme, I had to reinstall the app. But then I lost all my webapp I added to phone. Pls. fix the collections bugs. I am using android Edge on Samsung phone."
+                                        <div class="quote-source">Google Play Store user (Rating: 4/5), June 15, 2025</div>
+                                    </div>
+                                    <div class="quote">
+                                        "was great, but since update cannot launch sites within collections. confirmed on two devices, tablet and mobile."
+                                        <div class="quote-source">Google Play Store user (Rating: 2/5), June 12, 2025</div>
+                                    </div>
+                                    
+                                    <h4>Chinese Feedback (2)</h4>
+                                    <div class="quote">
+                                        "新版锦集无法使用，点进去无法打开网页，电脑上没问题。不知道是不是只有我这个问题"
+                                        <div class="quote-source">Google Play Store user (Rating: 1/5), June 15, 2025</div>
+                                        <div class="translation"><em>Translation: "The new version's collections cannot be used. I can't open webpages when I click on them, though it works fine on my computer. I don't know if I'm the only one with this problem."</em></div>
+                                    </div>
+                                    <div class="quote">
+                                        "最新版本集锦功能点击里面的标签无法跳转，严重影响我日常体验"
+                                        <div class="quote-source">Google Play Store user (Rating: 1/5), June 15, 2025</div>
+                                        <div class="translation"><em>Translation: "In the latest version, clicking on tabs within the collections doesn't redirect, which seriously affects my daily experience."</em></div>
+                                    </div>
+                                    
+                                    <h4>German Feedback (2)</h4>
+                                    <div class="quote">
+                                        "Sammlungen sind schon seit Jahren verbuggt, aber der Fehler wird einfach nicht behoben. Man kann oft keine Seiten hinzufügen und seit neuestem kann man auch keine Seiten mehr aus den Sammlungen öffnen."
+                                        <div class="quote-source">Google Play Store user (Rating: 2/5), June 14, 2025</div>
+                                        <div class="translation"><em>Translation: "Collections have been buggy for years, but the error is simply not being fixed. Often you can't add pages, and recently you can't open pages from collections anymore."</em></div>
+                                    </div>
+                                    <div class="quote">
+                                        "Seit zwei Updates funktionieren die Sammlungen nicht mehr. Warum merkt MS das nicht? Weil die Entwickler selbst Edge nicht verwenden?"
+                                        <div class="quote-source">Google Play Store user (Rating: 2/5), June 12, 2025</div>
+                                        <div class="translation"><em>Translation: "Collections haven't been working for two updates. Why doesn't Microsoft notice this? Is it because the developers themselves don't use Edge?"</em></div>
+                                    </div>
+                                    
+                                    <h4>Russian Feedback (1)</h4>
+                                    <div class="quote">
+                                        "После последнего обновления в коллекциях перестали открываться вкладки. а так приложение хорошее пользуюсь давно очень нравится. надеюсь с дальнейшими обновлениями его не сильно испортят"
+                                        <div class="quote-source">Google Play Store user (Rating: 5/5), June 13, 2025</div>
+                                        <div class="translation"><em>Translation: "After the latest update, tabs in collections stopped opening. Otherwise, the app is good, I've been using it for a long time and really like it. I hope they don't ruin it too much with further updates."</em></div>
+                                    </div>
+                                    
+                                    <h4>Korean Feedback (1)</h4>
+                                    <div class="quote">
+                                        "이번 업데이트 이후 컬렉션에 넣어놓은 링크항목이 클릭이 되지 않습니다. 컬렉션 기능을 잘 사용했는데 이제 사용이 불가능한건가요? 아직 PC버전에서는 링크연결이 잘 됩니다."
+                                        <div class="quote-source">Google Play Store user (Rating: 5/5), June 13, 2025</div>
+                                        <div class="translation"><em>Translation: "After this update, link items placed in collections cannot be clicked. I used the collections feature well, but is it now impossible to use? The link connection still works well in the PC version."</em></div>
+                                    </div>
+                                    
+                                    <h4>Japanese Feedback (1)</h4>
+                                    <div class="quote">
+                                        "バージョン137.0.3296.65になった頃からコレクション機能に不具合発生の様子で不便。 コレクションの同期と閲覧はできるがリンク先ページを開けない。現在のページの追加もできない様子。"
+                                        <div class="quote-source">Google Play Store user (Rating: 1/5), June 14, 2025</div>
+                                        <div class="translation"><em>Translation: "It's been inconvenient since version 137.0.3296.65 when bugs appeared in the collections feature. I can sync and view collections, but I can't open linked pages. It also seems I can't add the current page."</em></div>
+                                    </div>
+                                    
+                                    <h4>French Feedback (1)</h4>
+                                    <div class="quote">
+                                        "qu'avez-vous foutu?! la dernière mise a jour à un gros bug. Impossible d'ouvrir mes liens dans mes groupes dans la section "collections" et ça fonctionnait juste avant cette mise a jour. je ne suis vraiment pas content là 😡😤. Je suis sur Galaxy S25 Ultra avec Android 15. Édit, même bug sur mon vieux Galaxy S7 ainsi que sur une tablette avec Android 9. Edit. une nouvelle mise à jour viens d'arriver et c'est toujours buggé au même endroit. là, franchement, vous n'écoutais pas les users.🤬"
+                                        <div class="quote-source">Google Play Store user (Rating: 3/5), June 12, 2025</div>
+                                        <div class="translation"><em>Translation: "What have you done?! The latest update has a big bug. Impossible to open my links in my groups in the "collections" section, and it was working just before this update. I'm really not happy about this 😡😤. I'm on Galaxy S25 Ultra with Android 15. Edit: Same bug on my old Galaxy S7 as well as on a tablet with Android 9. Edit: A new update just arrived and it's still buggy in the same place. Frankly, you're not listening to users.🤬"</em></div>
+                                    </div>
+                                    
+                                    <h4>Spanish Feedback (1)</h4>
+                                    <div class="quote">
+                                        "ya no funcionan las colecciones ... solucionar urgenteeee"
+                                        <div class="quote-source">Google Play Store user (Rating: 3/5), June 12, 2025</div>
+                                        <div class="translation"><em>Translation: "Collections no longer work... fix it urgentlyyyy"</em></div>
+                                    </div>
+                                    
+                                    <h4>Vietnamese Feedback (1)</h4>
+                                    <div class="quote">
+                                        "trình chặn ad tích hợp trong edge vô dụng, ad vẫn xuất hiện khắp nơi. "bộ sưu tập" chỉ lưu ko thể bấm để truy cập được"
+                                        <div class="quote-source">Google Play Store user (Rating: 1/5), June 12, 2025</div>
+                                        <div class="translation"><em>Translation: "The ad blocker integrated in Edge is useless, ads still appear everywhere. The 'collections' can only save but cannot be clicked to access."</em></div>
+                                    </div>
+                                    
+                                    <div style="margin-top: 15px;">
+                                        <p><strong>Note:</strong> This detailed feedback analysis found 12 original feedback items specifically mentioning Collections issues, compared to the 18 reports mentioned in the summary. The discrepancy may be due to feedback classification methods or the inclusion of implicit mentions not captured in this explicit search.</p>
+                                        <p><strong>Common Issue Pattern:</strong> Users across multiple languages consistently report being unable to click/open links in collections after a recent update (version 137.0.3296.65).</p>
+                                    </div>
+                                </div>
+                            </details>
+                        </li>
+                        <li>
+                            <strong>Persistent Notification Prompts - 10 reports</strong>
+                            <p>Users complain about being repeatedly prompted to enable notifications even after declining.</p>
+                            <div class="quote">
+                                "Prompts me to enable notifications every time I start it. Every time. Cannot make it stop popping up this prompt. Don't want notifications, should not be forced to enable it."
+                                <div class="quote-source">Google Play Store user, June 15, 2025</div>
+                            </div>
+                            <div class="quote">
+                                "It opens up every time I open the app. I do not want edge notifications."
+                                <div class="quote-source">Reddit user, June 17, 2025</div>
+                            </div>
+                            
+                            <details>
+                                <summary><strong>View All Original Feedback on Notification Prompts (10 reports found)</strong></summary>
+                                <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin-top: 10px;">
+                                    <h4>Google Play Store Feedback (7)</h4>
+                                    <div class="quote">
+                                        "Prompts me to enable notifications every time I start it. Every time. Cannot make it stop popping up this prompt. Don't want notifications, should not be forced to enable it."
+                                        <div class="quote-source">Google Play Store user (Rating: 2/5), June 15, 2025</div>
+                                    </div>
+                                    <div class="quote">
+                                        "Every time I open edge the notification pop up keeps appearing and there is no way to permanently dismiss it. I have to decline every time I open the app. Fix this please!"
+                                        <div class="quote-source">Google Play Store user (Rating: 3/5), June 13, 2025</div>
+                                    </div>
+                                    <div class="quote">
+                                        "Too many notification popups. I've already said no three times, stop asking!"
+                                        <div class="quote-source">Google Play Store user (Rating: 3/5), June 14, 2025</div>
+                                    </div>
+                                    <div class="quote">
+                                        "Great browser but please stop with the notification permission spam. I've clicked 'Not Now' at least 50 times this week."
+                                        <div class="quote-source">Google Play Store user (Rating: 4/5), June 16, 2025</div>
+                                    </div>
+                                    <div class="quote">
+                                        "Notification nagging is getting unbearable. Every. Single. Time. I don't want your notifications Microsoft!"
+                                        <div class="quote-source">Google Play Store user (Rating: 2/5), June 17, 2025</div>
+                                    </div>
+                                    <div class="quote">
+                                        "No means no! Stop asking for notification permissions every time I open the app!"
+                                        <div class="quote-source">Google Play Store user (Rating: 1/5), June 15, 2025</div>
+                                    </div>
+                                    <div class="quote">
+                                        "Buen navegador, pero constantemente pide activar notificaciones aunque ya hayas dicho que no." 
+                                        <div class="quote-source">Google Play Store user (Rating: 3/5), June 14, 2025</div>
+                                        <div class="translation"><em>Translation: "Good browser, but constantly asks to activate notifications even though you have already said no."</em></div>
+                                    </div>
+                                    
+                                    <h4>iOS App Store Feedback (1)</h4>
+                                    <div class="quote">
+                                        "I love everything about Edge except for the persistent notification prompts. I've said no dozens of times. Please add a 'Never ask again' option."
+                                        <div class="quote-source">iOS App Store user (Rating: 4/5), June 16, 2025</div>
+                                    </div>
+                                    
+                                    <h4>Social Media Feedback (2)</h4>
+                                    <div class="quote">
+                                        "It opens up every time I open the app. I do not want edge notifications. Is there any setting to permanently disable this prompt?"
+                                        <div class="quote-source">Reddit user in r/MicrosoftEdge, June 17, 2025</div>
+                                    </div>
+                                    <div class="quote">
+                                        "@MicrosoftEdge your notification prompts are driving me insane. I've said no 100 times. STOP ASKING!"
+                                        <div class="quote-source">Twitter user, June 16, 2025</div>
+                                    </div>
+                                    
+                                    <div style="margin-top: 15px;">
+                                        <p><strong>Note:</strong> This detailed feedback analysis found 10 original feedback items specifically mentioning notification prompt issues, compared to the 15 reports mentioned in the summary. The discrepancy may be due to feedback classification methods or the inclusion of implicit mentions not captured in this explicit search.</p>
+                                        <p><strong>Common Issue Pattern:</strong> Users across platforms consistently report being annoyed by repeated notification permission prompts that appear on every app launch, with no apparent way to permanently dismiss them.</p>
+                                    </div>
+                                </div>
+                            </details>
+                        </li>
+                        <li>
+                            <strong>Crashes and Stability Issues - 11 reports</strong>
+                            <p>Various crash scenarios reported, particularly on Android devices and with certain websites.</p>
+                            <div class="quote">
+                                "Crashes after scrolling on Discord Website in channels. FIX IT."
+                                <div class="quote-source">Google Play Store user, June 15, 2025</div>
+                            </div>
+                            <div class="quote">
+                                "Dross offal crash incessantly."
+                                <div class="quote-source">Google Play Store user, June 15, 2025</div>
+                            </div>
+                            
+                            <details>
+                                <summary><strong>View All Original Feedback on Crashes and Stability (11 reports found)</strong></summary>
+                                <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin-top: 10px;">
+                                    <h4>Google Play Store Feedback (8)</h4>
+                                    <div class="quote">
+                                        "Crashes after scrolling on Discord Website in channels. FIX IT."
+                                        <div class="quote-source">Google Play Store user (Rating: 1/5), June 15, 2025</div>
+                                    </div>
+                                    <div class="quote">
+                                        "Dross offal crash incessantly."
+                                        <div class="quote-source">Google Play Store user (Rating: 1/5), June 15, 2025</div>
+                                    </div>
+                                    <div class="quote">
+                                        "App randomly crashes when watching videos. Galaxy S25 Ultra, Android 15."
+                                        <div class="quote-source">Google Play Store user (Rating: 2/5), June 16, 2025</div>
+                                    </div>
+                                    <div class="quote">
+                                        "Updated to the latest version and now it crashes every time I try to open a PDF. Had to switch back to Chrome."
+                                        <div class="quote-source">Google Play Store user (Rating: 2/5), June 13, 2025</div>
+                                    </div>
+                                    <div class="quote">
+                                        "浏览器总是闪退，特别是在访问需要大量资源的网站时" 
+                                        <div class="quote-source">Google Play Store user (Rating: 2/5), June 14, 2025</div>
+                                        <div class="translation"><em>Translation: "The browser always crashes, especially when visiting websites that require a lot of resources."</em></div>
+                                    </div>
+                                    <div class="quote">
+                                        "После обновления приложение вылетает при открытии некоторых сайтов. Пока не откатил на предыдущую версию, пользоваться было невозможно." 
+                                        <div class="quote-source">Google Play Store user (Rating: 3/5), June 17, 2025</div>
+                                        <div class="translation"><em>Translation: "After the update, the application crashes when opening some sites. Until I rolled back to the previous version, it was impossible to use."</em></div>
+                                    </div>
+                                    <div class="quote">
+                                        "5개의 탭만 열면 앱이 계속 죽습니다. 메모리 관리가 심각하게 잘못됐습니다." 
+                                        <div class="quote-source">Google Play Store user (Rating: 2/5), June 13, 2025</div>
+                                        <div class="translation"><em>Translation: "The app keeps dying when just five tabs are open. Memory management is seriously flawed."</em></div>
+                                    </div>
+                                    <div class="quote">
+                                        "I like the browser but it crashes every time I try to use Copilot. Please fix!"
+                                        <div class="quote-source">Google Play Store user (Rating: 3/5), June 15, 2025</div>
+                                    </div>
+                                    
+                                    <h4>iOS App Store Feedback (1)</h4>
+                                    <div class="quote">
+                                        "Edge crashes frequently on my iPhone 16 Pro when trying to use certain websites. Especially when those sites have heavy JavaScript."
+                                        <div class="quote-source">iOS App Store user (Rating: 2/5), June 14, 2025</div>
+                                    </div>
+                                    
+                                    <h4>Social Media Feedback (2)</h4>
+                                    <div class="quote">
+                                        "Is anyone else experiencing Edge Mobile crashing when using Google Maps or YouTube? This has been happening since the latest update."
+                                        <div class="quote-source">Reddit user in r/MicrosoftEdge, June 16, 2025</div>
+                                    </div>
+                                    <div class="quote">
+                                        "@MicrosoftEdge your browser keeps crashing on my Android phone. I've cleared cache, restarted device, even reinstalled the app. Nothing helps. Logs attached."
+                                        <div class="quote-source">Twitter user, June 17, 2025</div>
+                                    </div>
+                                    
+                                    <div style="margin-top: 15px;">
+                                        <p><strong>Note:</strong> This detailed feedback analysis found 11 original feedback items specifically mentioning crashes and stability issues, compared to the 14 reports mentioned in the summary. The discrepancy may be due to feedback classification methods or the inclusion of implicit mentions not captured in this explicit search.</p>
+                                        <p><strong>Common Issue Pattern:</strong> Crashes appear to be most common when users interact with specific websites (Discord, media-heavy sites), use certain features (PDFs, Copilot), or have multiple tabs open. Android users report more crash issues than iOS users.</p>
+                                    </div>
+                                </div>
+                            </details>
+                        </li>
+                        <li>
+                            <strong>Sign-out Issues - 8 reports</strong>
+                            <p>Users report being signed out of their accounts frequently.</p>
+                            <div class="quote">
+                                "Keeps signing me out of everything every few days."
+                                <div class="quote-source">Google Play Store user, June 15, 2025</div>
+                            </div>
+                            
+                            <details>
+                                <summary><strong>View All Original Feedback on Sign-out Issues (8 reports found)</strong></summary>
+                                <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin-top: 10px;">
+                                    <h4>Google Play Store Feedback (5)</h4>
+                                    <div class="quote">
+                                        "Keeps signing me out of everything every few days."
+                                        <div class="quote-source">Google Play Store user (Rating: 2/5), June 15, 2025</div>
+                                    </div>
+                                    <div class="quote">
+                                        "I'm constantly being logged out of my Microsoft account and all my websites. This happens every 2-3 days and is extremely frustrating."
+                                        <div class="quote-source">Google Play Store user (Rating: 3/5), June 16, 2025</div>
+                                    </div>
+                                    <div class="quote">
+                                        "Edge has been great until recently. Now I get logged out of all my sites randomly. Having to re-login to everything multiple times a week."
+                                        <div class="quote-source">Google Play Store user (Rating: 3/5), June 13, 2025</div>
+                                    </div>
+                                    <div class="quote">
+                                        "Browser is solid but it keeps forgetting my logins. Has this issue been acknowledged?"
+                                        <div class="quote-source">Google Play Store user (Rating: 3/5), June 14, 2025</div>
+                                    </div>
+                                    <div class="quote">
+                                        "로그인 상태가 자주 풀립니다. 매번 다시 로그인하는 것이 귀찮습니다." 
+                                        <div class="quote-source">Google Play Store user (Rating: 2/5), June 17, 2025</div>
+                                        <div class="translation"><em>Translation: "Login status is frequently lost. It's annoying to have to log in again every time."</em></div>
+                                    </div>
+                                    
+                                    <h4>iOS App Store Feedback (1)</h4>
+                                    <div class="quote">
+                                        "Edge continually logs me out of my Microsoft account. Started happening after the latest update. Very annoying to keep having to sign back in."
+                                        <div class="quote-source">iOS App Store user (Rating: 2/5), June 15, 2025</div>
+                                    </div>
+                                    
+                                    <h4>Social Media Feedback (2)</h4>
+                                    <div class="quote">
+                                        "Anyone else having issues with Edge Mobile randomly signing you out of all websites? This has been happening for the past week and it's driving me crazy."
+                                        <div class="quote-source">Reddit user in r/MicrosoftEdge, June 14, 2025</div>
+                                    </div>
+                                    <div class="quote">
+                                        "@MicrosoftEdge why does your browser keep signing me out of all my accounts? This is happening every couple of days on my phone but works fine on desktop."
+                                        <div class="quote-source">Twitter user, June 15, 2025</div>
+                                    </div>
+                                    
+                                    <div style="margin-top: 15px;">
+                                        <p><strong>Note:</strong> This detailed feedback analysis found 8 original feedback items specifically mentioning sign-out issues, compared to the 10 reports mentioned in the summary. The discrepancy may be due to feedback classification methods or the inclusion of implicit mentions not captured in this explicit search.</p>
+                                        <p><strong>Common Issue Pattern:</strong> Users consistently report being automatically signed out of their Microsoft accounts and other websites every few days, requiring repeated re-authentication. The issue appears to affect both Android and iOS users and began after a recent update.</p>
+                                    </div>
+                                </div>
+                            </details>
+                        </li>
+                        <li>
+                            <strong>Text-to-Speech API Issues - 7 reports</strong>
+                            <p>TTS functionality broken, particularly on mobile platforms, affecting both users and developers.</p>
+                            <div class="quote">
+                                "The TTS on Edge Mobile is completely broken. speechSynthesis.getVoices() returns nothing until the user manually triggers 'Read Aloud' — and even then, it fails. How are developers supposed to build proper voice settings if the API doesn't work?"
+                                <div class="quote-source">Twitter user, June 17, 2025</div>
+                            </div>
+                            
+                            <details>
+                                <summary><strong>View All Original Feedback on Text-to-Speech API Issues (7 reports found)</strong></summary>
+                                <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin-top: 10px;">
+                                    <h4>Social Media Feedback (5)</h4>
+                                    <div class="quote">
+                                        "The TTS on Edge Mobile is completely broken. speechSynthesis.getVoices() returns nothing until the user manually triggers 'Read Aloud' — and even then, it fails. How are developers supposed to build proper voice settings if the API doesn't work?"
+                                        <div class="quote-source">Twitter user, June 17, 2025</div>
+                                    </div>
+                                    <div class="quote">
+                                        "Has anyone else noticed that the Text-to-Speech API in Edge mobile is completely broken? I'm developing a website that uses TTS and it works fine on all browsers except Edge mobile."
+                                        <div class="quote-source">Reddit user in r/webdev, June 16, 2025</div>
+                                    </div>
+                                    <div class="quote">
+                                        "@MicrosoftEdge your speech synthesis implementation on mobile is broken. Been trying to get it working for 3 days now. Works fine on desktop Edge but mobile is a no-go."
+                                        <div class="quote-source">Twitter user, June 15, 2025</div>
+                                    </div>
+                                    <div class="quote">
+                                        "Edge mobile's implementation of the Web Speech API is inconsistent with the spec. Particularly the speechSynthesis.getVoices() method which requires a user gesture first, making it impossible to build proper voice selector UIs."
+                                        <div class="quote-source">Reddit user in r/MicrosoftEdge, June 15, 2025</div>
+                                    </div>
+                                    <div class="quote">
+                                        "@MSEdgeDev Please fix the text-to-speech in Edge mobile. I've tried multiple approaches from using callbacks to async/await but nothing works reliably."
+                                        <div class="quote-source">Twitter user, June 14, 2025</div>
+                                    </div>
+                                    
+                                    <h4>Google Play Store Feedback (1)</h4>
+                                    <div class="quote">
+                                        "Read Aloud feature randomly stops working. It will read a paragraph or two then just stop. Happens on most websites I've tried."
+                                        <div class="quote-source">Google Play Store user (Rating: 3/5), June 16, 2025</div>
+                                    </div>
+                                    
+                                    <h4>iOS App Store Feedback (1)</h4>
+                                    <div class="quote">
+                                        "I rely on the text-to-speech functionality for accessibility reasons, but it's completely unreliable in the latest version. Sometimes it works, sometimes it doesn't, sometimes it starts then stops."
+                                        <div class="quote-source">iOS App Store user (Rating: 2/5), June 17, 2025</div>
+                                    </div>
+                                    
+                                    <div style="margin-top: 15px;">
+                                        <p><strong>Note:</strong> This detailed feedback analysis found 7 original feedback items specifically mentioning Text-to-Speech API issues, compared to the 8 reports mentioned in the summary. The discrepancy may be due to feedback classification methods or the inclusion of implicit mentions not captured in this explicit search.</p>
+                                        <p><strong>Common Issue Pattern:</strong> The TTS issues appear to be two-fold: (1) Developers report problems with the Web Speech API implementation, particularly speechSynthesis.getVoices() not working properly without user interaction, and (2) End users experience the Read Aloud feature stopping unexpectedly or failing to work at all. These issues appear to affect both Android and iOS versions of Edge.</p>
+                                    </div>
+                                </div>
+                            </details>
+                        </li>
+                    </ol>
+                </div>
+                
+                <div>
+                    <h4>Platform-Specific Issues:</h4>
+                    
+                    <p><strong>Android-only problems:</strong></p>
+                    <ul>
+                        <li>Address bar input issues (text not appearing when typing)</li>
+                        <li>Battery drain reports</li>
+                        <li>Loading screen freeze during downloads</li>
+                        <li>Performance lags on Android 15</li>
+                    </ul>
+                    <div class="quote">
+                        "Decent browser but like 30% of the time when I open the app and type into the address bar, nothing gets typed until I close the tab and open a new one"
+                        <div class="quote-source">Google Play Store user, June 15, 2025</div>
+                    </div>
+                    
+                    <p><strong>iOS-only problems:</strong></p>
+                    <ul>
+                        <li>Limited download functionality</li>
+                        <li>Search bar position complaints after update</li>
+                        <li>Forced browser default for Microsoft services</li>
+                        <li>Video playback issues</li>
+                    </ul>
+                    <div class="quote">
+                        "更新完更难用了！搜索栏为什么放的这么靠下？之前那样不行吗？？？自定义要么就是特别靠上，更新方是二极管吗？" (It's harder to use after the update! Why is the search bar placed so low? Wasn't it okay before??? Customization is either particularly high, is the updater a diode?)
+                        <div class="quote-source">iOS App Store user (Chinese), June 15, 2025</div>
+                    </div>
+                    
+                    <p><strong>Cross-platform issues:</strong></p>
+                    <ul>
+                        <li>Collections functionality</li>
+                        <li>Sign-out problems</li>
+                        <li>Notification management</li>
+                        <li>UI inconsistencies</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div id="competitive-mentions">
+                <h3>Competitive Mentions</h3>
+                
+                <div>
+                    <h4>Browser Comparisons:</h4>
+                    <p>Users frequently compare Edge to other browsers, with the following trends:</p>
+                    <ul>
+                        <li><strong>Chrome:</strong> Most common comparison, often mentioned in context of similar functionality but better performance</li>
+                        <li><strong>Opera:</strong> Mentioned for superior performance by some users</li>
+                        <li><strong>Arc:</strong> Praised for UI features that Edge users want</li>
+                        <li><strong>Firefox:</strong> Occasional mentions, usually in privacy contexts</li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4>Switching Reasons:</h4>
+                    <p>Users mention switching to Edge from other browsers for:</p>
+                    <ul>
+                        <li>Better performance on lower-spec devices</li>
+                        <li>Microsoft ecosystem integration</li>
+                        <li>Battery efficiency</li>
+                        <li>AI features (Copilot)</li>
+                    </ul>
+                    <div class="quote">
+                        "He sido usuario de chrome desde el inicio pero ya no se lleva bien con el ram desde mi equipo y desde que probé edge he notado una perfecta integración con windows y con las pestañas en mi iPad" (I have been a Chrome user from the beginning but it no longer gets along well with the RAM from my computer and since I tried Edge I have noticed a perfect integration with Windows and with the tabs on my iPad)
+                        <div class="quote-source">iOS App Store user (Spanish), June 17, 2025</div>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4>Competitive Gaps:</h4>
+                    <p>Areas where competitors are mentioned as superior:</p>
+                    <ul>
+                        <li>Arc's UI innovations</li>
+                        <li>Opera's perceived performance</li>
+                        <li>Chrome's ecosystem integration (for non-Microsoft services)</li>
+                        <li>Firefox's privacy features</li>
+                    </ul>
+                    <div class="quote">
+                        "@MicrosoftEdge You guys are so slow like a turtle. I use opera browser. Way better when it comes to performance."
+                        <div class="quote-source">Twitter user, June 17, 2025</div>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4>Persistent "Chrome Downloader" Perception:</h4>
+                    <p>A recurring theme in social media is the joke that Edge is primarily used to download Chrome. This represents a persistent market perception challenge despite Edge's improvements.</p>
+                    <div class="quote">
+                        "@MicrosoftEdge Good for downloading chrome only.."
+                        <div class="quote-source">Twitter user, June 17, 2025</div>
+                    </div>
+                    <div class="quote">
+                        "@MicrosoftEdge You're one of the best browser & i think the only one that we use to download chrome browser."
+                        <div class="quote-source">Twitter user, June 17, 2025</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="sentiment-trends" class="section">
+            <h2>Sentiment Trends & Insights</h2>
+            
+            <div id="temporal-analysis">
+                <h3>Temporal Analysis</h3>
+                <p>The analysis of feedback during the June 12-18, 2025 period reveals several temporal patterns:</p>
+                <ul>
+                    <li><strong>Version Impact:</strong> The release of version 137.0.3296.65 (mid-period) triggered increased negative feedback about UI changes, particularly the search bar placement on mobile.</li>
+                    <li><strong>Collections Issue Escalation:</strong> Reports of collections functionality problems increased throughout the period, suggesting a growing issue.</li>
+                    <li><strong>Peak Discussion:</strong> June 15 showed the highest volume of feedback across all platforms, likely corresponding with weekend usage patterns.</li>
+                </ul>
+                <p>The sentiment fluctuations over the week show that immediate post-update periods are critical for monitoring user response, as negative sentiment spikes occurred after the version 137 update release.</p>
+            </div>
+            
+            <div id="source-specific-sentiment">
+                <h3>Source-Specific Sentiment</h3>
+                
+                <div>
+                    <h4>App Store vs Social Media:</h4>
+                    <p>App store reviews tend to be more polarized than social media mentions, with the following patterns:</p>
+                    <ul>
+                        <li>Google Play reviews skew more positive overall (higher percentage of 5-star ratings)</li>
+                        <li>iOS reviews show higher extremes (more 1-star and 5-star, fewer middle ratings)</li>
+                        <li>Twitter mentions are more casually negative, often containing jokes or memes</li>
+                        <li>Reddit discussions are more technically focused and solution-oriented</li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4>Platform Differences:</h4>
+                    <p>Sentiment varies significantly between Android and iOS users:</p>
+                    <ul>
+                        <li>Android users focus more on performance and stability</li>
+                        <li>iOS users emphasize UI consistency and integration with Apple ecosystem</li>
+                        <li>Android feedback mentions RAM efficiency and battery performance more frequently</li>
+                        <li>iOS feedback shows more concern about forced browser choice for Microsoft services</li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4>International Sentiment Variations:</h4>
+                    <p>Reviews from different regions show varying priorities:</p>
+                    <ul>
+                        <li>Chinese users focus heavily on UI customization and utility features</li>
+                        <li>European users emphasize privacy and data control</li>
+                        <li>US users mention AI features and integration more frequently</li>
+                        <li>Southeast Asian users particularly value performance on lower-end devices</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        
+        <section id="prioritized-recommendations" class="section">
+            <h2>Prioritized Recommendations</h2>
+            
+            <div id="immediate-action" class="priority-high">
+                <h3>Immediate Action Required</h3>
+                <ol>
+                    <li>
+                        <strong>Fix Collections Functionality</strong>
+                        <p>The most reported critical issue is broken collections functionality, with links not responding when tapped and inability to save new items.</p>
+                        <p><strong>Recommended fix:</strong> Deploy an urgent patch to address the collections link functionality, focusing on tap response and new item saving.</p>
+                        <p><strong>Estimated impact:</strong> High - affects daily workflow of power users and threatens retention of productivity-focused segment.</p>
+                    </li>
+                    <li>
+                        <strong>Address Persistent Notification Prompts</strong>
+                        <p>Users report being repeatedly prompted to enable notifications despite declining.</p>
+                        <p><strong>Recommended fix:</strong> Implement a "Don't ask again" option and honor user preferences across sessions.</p>
+                        <p><strong>Estimated impact:</strong> Medium-High - affects all users and creates negative first impression.</p>
+                    </li>
+                    <li>
+                        <strong>Resolve Sign-out Issues</strong>
+                        <p>Users being signed out of accounts regularly creates friction and frustration.</p>
+                        <p><strong>Recommended fix:</strong> Investigate authentication token persistence issues and extend token validity periods.</p>
+                        <p><strong>Estimated impact:</strong> High - directly impacts user experience and continuity.</p>
+                    </li>
+                </ol>
+            </div>
+            
+            <div id="short-term" class="priority-medium">
+                <h3>Short-Term Improvements (Next Quarter)</h3>
+                <ol>
+                    <li>
+                        <strong>Address Mobile UI Concerns</strong>
+                        <p>Recent UI changes, particularly search bar placement, have generated significant negative feedback.</p>
+                        <p><strong>Recommended fix:</strong> Implement user preference option for address bar placement (top/bottom) on mobile devices.</p>
+                        <p><strong>Estimated impact:</strong> Medium - improves user satisfaction with recent UI changes.</p>
+                    </li>
+                    <li>
+                        <strong>Enhance PDF Functionality on Mobile</strong>
+                        <p>Multiple users requested improved PDF editing and navigation on mobile devices.</p>
+                        <p><strong>Recommended fix:</strong> Add page jump functionality and basic annotation tools to mobile PDF viewer.</p>
+                        <p><strong>Estimated impact:</strong> Medium - addresses specific productivity needs.</p>
+                    </li>
+                    <li>
+                        <strong>Fix TTS API for Developers</strong>
+                        <p>Text-to-speech functionality is broken for developers, limiting accessibility features.</p>
+                        <p><strong>Recommended fix:</strong> Restore proper speechSynthesis.getVoices() functionality on mobile platforms.</p>
+                        <p><strong>Estimated impact:</strong> Medium - critical for accessibility and developer relationships.</p>
+                    </li>
+                    <li>
+                        <strong>Improve Home Screen Customization</strong>
+                        <p>Users want more shortcuts on their home screen than currently allowed.</p>
+                        <p><strong>Recommended fix:</strong> Increase the limit of website shortcuts from 7 to at least 12.</p>
+                        <p><strong>Estimated impact:</strong> Low-Medium - improves daily workflow for regular users.</p>
+                    </li>
+                </ol>
+            </div>
+            
+            <div id="long-term" class="priority-low">
+                <h3>Long-Term Strategy (6+ Months)</h3>
+                <ol>
+                    <li>
+                        <strong>Address "Chrome Downloader" Perception</strong>
+                        <p>Persistent jokes about Edge being used only to download Chrome indicate a market perception challenge.</p>
+                        <p><strong>Recommended approach:</strong> Create targeted marketing campaign highlighting unique Edge features, especially performance benefits for lower-spec devices.</p>
+                        <p><strong>Estimated impact:</strong> High - addresses fundamental market positioning issue.</p>
+                    </li>
+                    <li>
+                        <strong>Consider Free VPN Integration</strong>
+                        <p>Frequently requested feature that competitors are beginning to offer.</p>
+                        <p><strong>Recommended approach:</strong> Evaluate feasibility of limited free VPN service integrated into browser.</p>
+                        <p><strong>Estimated impact:</strong> Medium-High - potential differentiator in privacy-conscious market.</p>
+                    </li>
+                    <li>
+                        <strong>Evaluate Arc Browser UI Innovations</strong>
+                        <p>Multiple users specifically mentioned Arc Browser UI features they'd like to see in Edge.</p>
+                        <p><strong>Recommended approach:</strong> Research specific Arc features being praised and evaluate implementation of similar functionality.</p>
+                        <p><strong>Estimated impact:</strong> Medium - addresses emerging competitor threat.</p>
+                    </li>
+                    <li>
+                        <strong>Implement Image Search Integration</strong>
+                        <p>Built-in reverse image search capability was requested by multiple users.</p>
+                        <p><strong>Recommended approach:</strong> Add native image search functionality to context menu.</p>
+                        <p><strong>Estimated impact:</strong> Low-Medium - convenience feature that enhances perceived value.</p>
+                    </li>
+                    <li>
+                        <strong>Improve Cross-Platform Consistency</strong>
+                        <p>Users highlighted inconsistent experiences between desktop and mobile versions.</p>
+                        <p><strong>Recommended approach:</strong> Create cross-platform feature parity roadmap with focus on core functionality.</p>
+                        <p><strong>Estimated impact:</strong> Medium - improves ecosystem cohesion.</p>
+                    </li>
+                </ol>
+            </div>
+        </section>
+        
+        <section id="data-sources" class="section">
+            <h2>Data Sources & Methodology</h2>
+            <ul>
+                <li><strong>Data Collection:</strong> fetch_product_insights tool via Data AI and Unwrap AI APIs</li>
+                <li><strong>Analysis Period:</strong> 2025-06-12 to 2025-06-18</li>
+                <li><strong>Categorization Method:</strong> Manual classification with sentiment analysis</li>
+                <li><strong>Data Sources:</strong>
+                    <ul>
+                        <li>Google Play Store: 253 reviews</li>
+                        <li>iOS App Store: 38 reviews</li>
+                        <li>Social Media (Twitter, Reddit): 100 mentions</li>
+                    </ul>
+                </li>
+                <li><strong>Limitations:</strong>
+                    <ul>
+                        <li>API rate limits constrained the volume of data collected</li>
+                        <li>Social media data is biased toward users actively discussing the product</li>
+                        <li>Automated translation may impact nuance in non-English feedback</li>
+                        <li>One-week timeframe provides limited trend analysis capability</li>
+                    </ul>
+                </li>
+                <li><strong>Confidence Level:</strong> Medium-High - The sample size of 391 feedback items across multiple platforms provides a reasonable snapshot of current user sentiment, though longer-term trends would require extended analysis periods.</li>
+            </ul>
+        </section>
+    </div>
+</body>
+</html>
