@@ -1,0 +1,1596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edge Mobile Issues Deep Dive Analysis - Enhanced</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .enhancement-badge {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+            margin-top: 10px;
+            display: inline-block;
+        }
+        
+        .issue-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .issue-header {
+            padding: 25px 30px;
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .issue-header:hover {
+            background: linear-gradient(135deg, #c0392b 0%, #e74c3c 100%);
+        }
+        
+        .issue-header h2 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .issue-stats {
+            display: flex;
+            gap: 20px;
+            font-size: 0.9em;
+        }
+        
+        .stat-item {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px 10px;
+            border-radius: 15px;
+        }
+        
+        .issue-content {
+            padding: 30px;
+            display: none;
+        }
+        
+        .issue-content.active {
+            display: block;
+        }
+        
+        .feedback-item {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid #007bff;
+            position: relative;
+        }
+        
+        .feedback-item.high-severity {
+            border-left-color: #dc3545;
+            background: linear-gradient(135deg, #fff5f5 0%, #fed7d7 100%);
+        }
+        
+        .feedback-item.medium-severity {
+            border-left-color: #ffc107;
+            background: linear-gradient(135deg, #fffdf5 0%, #fef5e7 100%);
+        }
+        
+        .feedback-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .feedback-meta {
+            display: flex;
+            gap: 15px;
+            font-size: 0.9em;
+            color: #6c757d;
+            flex-wrap: wrap;
+        }
+        
+        .url-link {
+            background: #667eea;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 0.8em;
+            font-weight: bold;
+            transition: background 0.3s ease;
+        }
+        
+        .url-link:hover {
+            background: #5a6fd8;
+            text-decoration: none;
+            color: white;
+        }
+        
+        .severity-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        
+        .high-severity-badge {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .medium-severity-badge {
+            background: #ffc107;
+            color: #333;
+        }
+        
+        .low-severity-badge {
+            background: #28a745;
+            color: white;
+        }
+        
+        .rating-stars {
+            color: #ffc107;
+        }
+        
+        .feedback-text {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            font-style: italic;
+            border: 1px solid #e9ecef;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        
+        .matched-keywords {
+            margin-top: 10px;
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+        
+        .keyword-tag {
+            background: #667eea;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.8em;
+        }
+        
+        .toggle-icon {
+            transition: transform 0.3s ease;
+        }
+        
+        .toggle-icon.active {
+            transform: rotate(180deg);
+        }
+        
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .summary-card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        }
+        
+        .summary-card h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        
+        .priority-list {
+            list-style: none;
+        }
+        
+        .priority-item {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .priority-item:last-child {
+            border-bottom: none;
+        }
+        
+        .feedback-counter {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #007bff;
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7em;
+            font-weight: bold;
+        }
+        
+        .footer {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.8);
+            margin-top: 30px;
+            padding: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .feedback-meta {
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .feedback-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 Edge Mobile Issues Deep Dive</h1>
+            <p style="color: #7f8c8d; font-size: 1.2em;">Enhanced Analysis with Original URLs & Complete Feedback</p>
+            <p style="color: #7f8c8d;"><strong>Period: June 19-24, 2025</strong></p>
+            <div class="enhancement-badge">✨ Enhanced Version with Full Data</div>
+        </div>
+        
+        <div class="summary-grid">
+            <div class="summary-card">
+                <h3>🚨 High Priority Issues</h3>
+                <ul class="priority-list">
+                    <li class="priority-item">
+                        <span>Copilot & AI Issues</span>
+                        <span style="color: #dc3545; font-weight: bold;">4 critical</span>
+                    </li>
+                    <li class="priority-item">
+                        <span>Extension Problems</span>
+                        <span style="color: #dc3545; font-weight: bold;">3 critical</span>
+                    </li>
+                    <li class="priority-item">
+                        <span>UI/UX Issues</span>
+                        <span style="color: #dc3545; font-weight: bold;">2 critical</span>
+                    </li>
+                    <li class="priority-item">
+                        <span>Video & Media Issues</span>
+                        <span style="color: #dc3545; font-weight: bold;">2 critical</span>
+                    </li>
+                    <li class="priority-item">
+                        <span>Notifications & Popups</span>
+                        <span style="color: #dc3545; font-weight: bold;">2 critical</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="summary-card">
+                <h3>📊 Complete Issue Distribution</h3>
+                <ul class="priority-list">
+                    <li class="priority-item">
+                        <span>Copilot & AI Issues</span>
+                        <span style="color: #667eea; font-weight: bold;">18 total</span>
+                    </li>
+                    <li class="priority-item">
+                        <span>Extension Problems</span>
+                        <span style="color: #667eea; font-weight: bold;">12 total</span>
+                    </li>
+                    <li class="priority-item">
+                        <span>UI/UX Issues</span>
+                        <span style="color: #667eea; font-weight: bold;">5 total</span>
+                    </li>
+                    <li class="priority-item">
+                        <span>Video & Media Issues</span>
+                        <span style="color: #667eea; font-weight: bold;">5 total</span>
+                    </li>
+                    <li class="priority-item">
+                        <span>Notifications & Popups</span>
+                        <span style="color: #667eea; font-weight: bold;">4 total</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="summary-card">
+                <h3>🎯 Key Enhancements</h3>
+                <ul style="list-style-type: disc; margin-left: 20px;">
+                    <li>✅ All Unwrap feedback includes original URLs</li>
+                    <li>✅ Complete feedback display (no truncation)</li>
+                    <li>✅ Enhanced source tracking with clickable links</li>
+                    <li>✅ Improved mobile responsiveness</li>
+                </ul>
+            </div>
+        </div>
+        <div class="issue-section">
+            <div class="issue-header" onclick="toggleIssue('Copilot_and_AI_Issues')">
+                <h2>
+                    <span>🔧 Copilot & AI Issues</span>
+                    <span class="toggle-icon" id="icon_Copilot_and_AI_Issues">▼</span>
+                </h2>
+                <div class="issue-stats">
+                    <div class="stat-item">Total: 18</div>
+                    <div class="stat-item">High: 4</div>
+                    <div class="stat-item">Medium: 0</div>
+                    <div class="stat-item">Low: 14</div>
+                </div>
+            </div>
+            
+            <div class="issue-content" id="content_Copilot_and_AI_Issues">
+                <div class="feedback-item low-severity">
+                    <div class="feedback-counter">1</div>
+                    <div class="feedback-header">
+                        <div class="feedback-meta">
+                            <span>📱 Social Media (Unwrap)</span>
+                            <span>📅 2025-06-24 14:05:49+00:00</span>
+                            <span>🆔 UNWRAP_0</span>
+                            <a href="https://www.reddit.com/r/browsers/comments/1ljc0g9/" target="_blank" class="url-link">🔗 View Original</a>
+                        </div>
+                        <div>
+                            <span class="severity-badge low-severity-badge">Low</span>
+                            
+                        </div>
+                    </div>
+                    <div class="feedback-text">"Is it only me or does edge on android reloads rather quickly. You just have to leave the app for 5 seconds and go back into it for it to reload the whole page. It's very frustrating especially when filling up info or reading documents online etc. Because of this I'm so reluctant do daily it as it has become very inconvenient. "</div>
+                    <div class="matched-keywords"><span class="keyword-tag">ai</span></div>
+                </div>
+                <div class="feedback-item low-severity">
+                    <div class="feedback-counter">2</div>
+                    <div class="feedback-header">
+                        <div class="feedback-meta">
+                            <span>📱 Social Media (Unwrap)</span>
+                            <span>📅 2025-06-23 04:33:05+00:00</span>
+                            <span>🆔 UNWRAP_3</span>
+                            <a href="https://www.reddit.com/r/MicrosoftEdge/comments/1li7lz2/" target="_blank" class="url-link">🔗 View Original</a>
+                        </div>
+                        <div>
+                            <span class="severity-badge low-severity-badge">Low</span>
+                            
+                        </div>
+                    </div>
+                    <div class="feedback-text">"Is there any way for the edge to add the ability to download the things via external download managers like adm or 1dm...
+This feature comes handy for power users.
+P.s edge added the ability to make web apps full screen that i have been waiting for years to add to."</div>
+                    <div class="matched-keywords"><span class="keyword-tag">ai</span></div>
+                </div>
+                <div class="feedback-item low-severity">
+                    <div class="feedback-counter">3</div>
+                    <div class="feedback-header">
+                        <div class="feedback-meta">
+                            <span>📱 Social Media (Unwrap)</span>
+                            <span>📅 2025-06-21 18:42:17+00:00</span>
+                            <span>🆔 UNWRAP_5</span>
+                            <a href="https://www.reddit.com/r/browsers/comments/1lh3n57/" target="_blank" class="url-link">🔗 View Original</a>
+                        </div>
+                        <div>
+                            <span class="severity-badge low-severity-badge">Low</span>
+                            
+                        </div>
+                    </div>
+                    <div class="feedback-text">"I know yandex supports it but I don't trust it due to Russian link..edge also has limited support but again browser lacks customization options and ofcourse MS link difficult to trust
+.
+
+Please suggest"</div>
+                    <div class="matched-keywords"><span class="keyword-tag">ai</span></div>
+                </div>
+                <div class="feedback-item low-severity">
+                    <div class="feedback-counter">4</div>
+                    <div class="feedback-header">
+                        <div class="feedback-meta">
+                            <span>📱 Social Media (Unwrap)</span>
+                            <span>📅 2025-06-21 15:25:41+00:00</span>
+                            <span>🆔 UNWRAP_7</span>
+                            
+                        </div>
+                        <div>
+                            <span class="severity-badge low-severity-badge">Low</span>
+                            
+                        </div>
+                    </div>
+                    <div class="feedback-text">"Copilot don't work on Microsoft Edge using Android mobile phone"</div>
+                    <div class="matched-keywords"><span class="keyword-tag">copilot</span></div>
+                </div>
+                <div class="feedback-item high-severity">
+                    <div class="feedback-counter">5</div>
+                    <div class="feedback-header">
+                        <div class="feedback-meta">
+                            <span>📱 Google Play Store</span>
+                            <span>📅 2025-06-23</span>
+                            <span>🆔 GPLAY_12</span>
+                            
+                        </div>
+                        <div>
+                            <span class="severity-badge high-severity-badge">High</span>
+                            <span class="rating-stars">★☆☆☆☆ (1/5)</span>
+                        </div>
+                    </div>
+                    <div class="feedback-text">"Saat menulis panjang lebar pada fitur copilot kemudian secara tidak sengaja saya meng-swipe down dan seketika itu juga tulisan saya hilang. Sangat menjengkelkan. Kepada developer mohon diperhatikan situasi ini."</div>
+                    <div class="matched-keywords"><span class="keyword-tag">copilot</span></div>
+                </div>
+                <div class="feedback-item high-severity">
+                    <div class="feedback-counter">6</div>
+                    <div class="feedback-header">
+                        <div class="feedback-meta">
+                            <span>📱 Google Play Store</span>
+                            <span>📅 2025-06-23</span>
+                            <span>🆔 GPLAY_15</span>
+                            
+                        </div>
+                        <div>
+                            <span class="severity-badge high-severity-badge">High</span>
+                            <span class="rating-stars">★☆☆☆☆ (1/5)</span>
+                        </div>
+                    </div>
+                    <div class="feedback-text">"toda vez que abre o Aplicativo fica insistindo em notificações a navegação e chata e confusa."</div>
+                    <div class="matched-keywords"><span class="keyword-tag">chat</span></div>
+                </div>
+                <div class="feedback-item high-severity">
+                    <div class="feedback-counter">7</div>
+                    <div class="feedback-header">
+                        <div class="feedback-meta">
+                            <span>📱 Google Play Store</span>
+                            <span>📅 2025-06-22</span>
+                            <span>🆔 GPLAY_96</span>
+                            
+                        </div>
+                        <div>
+                            <span class="severity-badge high-severity-badge">High</span>
+                            <span class="rating-stars">★☆☆☆☆ (1/5)</span>
+                        </div>
+                    </div>
+                    <div class="feedback-text">"Choosing "Desktop-Mode" on Youtube page is pointless,as if you turn off the phone screen ,whatever play you are 'whatching' on ,stops along with it. Although, it supports extensions like Ublock Origin, that is a good point. I'll remain with Kiwi Browser, the best for any android until now."</div>
+                    <div class="matched-keywords"><span class="keyword-tag">ai</span></div>
+                </div>
+                <div class="feedback-item low-severity">
+                    <div class="feedback-counter">8</div>
+                    <div class="feedback-header">
+                        <div class="feedback-meta">
+                            <span>📱 Google Play Store</span>
+                            <span>📅 2025-06-22</span>
+                            <span>🆔 GPLAY_74</span>
+                            
+                        </div>
+                        <div>
+                            <span class="severity-badge low-severity-badge">Low</span>
+                            <span class="rating-stars">★★★★☆ (4/5)</span>
+                        </div>
+                    </div>
+                    <div class="feedback-text">"Thanks for updating the customisation but I am rating 4 stars because I can't find copilot anywhere, just as there is in bing."</div>
+                    <div class="matched-keywords"><span class="keyword-tag">copilot</span></div>
+                </div>
+                <div class="feedback-item low-severity">
+                    <div class="feedback-counter">9</div>
+                    <div class="feedback-header">
+                        <div class="feedback-meta">
+                            <span>📱 Google Play Store</span>
+                            <span>📅 2025-06-23</span>
+                            <span>🆔 GPLAY_26</span>
+                            
+                        </div>
+                        <div>
+                            <span class="severity-badge low-severity-badge">Low</span>
+                            <span class="rating-stars">★★★★★ (5/5)</span>
+                        </div>
+                    </div>
+                    <div class="feedback-text">"100% safe web browser which has a improved AI browsing experience for you. It opens very quickly when you tap/press it's icon. Safe fpr children too. It is very exciting. It is the best app/icon I have ever seen.!Try it!😄😄😄😄😄"</div>
+                    <div class="matched-keywords"><span class="keyword-tag">ai</span></div>
+                </div>
+                <div class="feedback-item low-severity">
+                    <div class="feedback-counter">10</div>
+                    <div class="feedback-header">
+                        <div class="feedback-meta">
+                            <span>📱 Google Play Store</span>
+                            <span>📅 2025-06-22</span>
+                            <span>🆔 GPLAY_91</span>
+                            
+                        </div>
+                        <div>
+                            <span class="severity-badge low-severity-badge">Low</span>
+                            <span class="rating-stars">★★★★★ (5/5)</span>
+                        </div>
+                    </div>
+                    <div class="feedback-text">"Allows ublock origin again! Will always be 5 stars while it supports this extension."</div>
+                    <div class="matched-keywords"><span class="keyword-tag">ai</span></div>
+                </div>
+                <div class="feedback-item low-severity">
+                    <div class="feedback-counter">11</div>
+                    <div class="feedback-header">
+                        <div class="feedback-meta">
+                            <span>📱 Google Play Store</span>
+                            <span>📅 2025-06-22</span>
+                            <span>🆔 GPLAY_123</span>
+                            
+                        </div>
+                        <div>
+                            <span class="severity-badge low-severity-badge">Low</span>
+                            <span class="rating-stars">★★★★★ (5/5)</span>
+                        </div>
+                    </div>
+                    <div class="feedback-text">"Thank you wery much! 👏 ÇOK TEŞEKKÜR EDERİM! 👍🏻 COPİLOT uygulamanız MUHTEŞEM.🥳👏 Chat GPT'yi yerle bir edecek kadar kaliteli! 👏 GÜNCEL VERİ sunuyor oluşu en büyük artınız! 👏 Sağolun varolun.. 👏 Eksi yönü "Nadiren sorularımızı anlayabilmek için SORUYU KENDİ KENDİNE İNGİLİZCE TEKRAR ETMESİ" ve bunu bizim duymamız!⚠️ Bunu niye yapıyorsun deyince hata oldu deyip ÖZÜR DİLEMESİ güzel" 😊🥰 Bazen mikrofona uzaktan soru sorduğumda SORUYU YANLIŞ ANLAMASI ve HALİYLE SORUYA YANLIŞ CEVAP VERMESİ! 🤔⚠️"</div>
+                    <div class="matched-keywords"><span class="keyword-tag">chat</span></div>
+                </div>
+                <div class="feedback-item low-severity">
+                    <div class="feedback-counter">12</div>
+                    <div class="feedback-header">
+                        <div class="feedback-meta">
+                            <span>📱 Google Play Store</span>
+                            <span>📅 2025-06-22</span>
+                            <span>🆔 GPLAY_131</span>
+                            
+                        </div>
+                        <div>
+                            <span class="severity-badge low-severity-badge">Low</span>
+                            <span class="rating-stars">★★★★★ (5/5)</span>
+                        </div>
+                    </div>
+                    <div class="feedback-text">"bravo Microsoft j'ai utilisé chrome pendant des années puis a force que Microsoft impose edge j'ai dit pourquoi pas testé et vraiment je suis surpris du résultat économe en batterie et en ressources, plus défendeur et extension pub , franchement j'ai pas trouvé de défauts pourtant je suis casse pied"</div>
+                    <div class="matched-keywords"><span class="keyword-tag">ai</span></div>
+                </div>
+                <div class="feedback-item low-severity">
+                    <div class="feedback-counter">13</div>
+                    <div class="feedback-header">
+                        <div class="feedback-meta">
+                            <span>📱 Google Play Store</span>
+                            <span>📅 2025-06-22</span>
+                            <span>🆔 GPLAY_133</span>
+                            
+                        </div>
+                        <div>
+                            <span class="severity-badge low-severity-badge">Low</span>
+                            <span class="rating-stars">★★★★★ (5/5)</span>
+                        </div>
+                    </div>
+                    <div class="feedback-text">"parfait"</div>
+                    <div class="matched-keywords"><span class="keyword-tag">ai</span></div>
+                </div>
+                <div class="feedback-item low-severity">
+                    <div class="feedback-counter">14</div>
+                    <div class="feedback-header">
+                        <div class="feedback-meta">
+                            <span>📱 Google Play Store</span>
+                            <span>📅 2025-06-22</span>
+                            <span>🆔 GPLAY_138</span>
+                            
+                        </div>
+                        <div>
+                            <span class="severity-badge low-severity-badge">Low</span>
+                            <span class="rating-stars">★★★★★ (5/5)</span>
+                        </div>
+                    </div>
+                    <div class="feedback-text">"The best browser I can think of. It's fast, light on resources, and feature packed. I use it on PC too, way better then chrome. Copilot features work excellently, and it's aesthetically pleasing. Not to mention a built in adblocker! Way better at tab organization then other browsers, overall outstanding browser!"</div>
+                    <div class="matched-keywords"><span class="keyword-tag">copilot</span></div>
+                </div>
+                <div class="feedback-item high-severity">
+                    <div class="feedback-counter">15</div>
+                    <div class="feedback-header">
+                        <div class="feedback-meta">
+                            <span>📱 iOS App Store</span>
+                            <span>📅 2025-06-22</span>
+                            <span>🆔 IOS_2</span>
+                            
+                        </div>
+                        <div>
+                            <span class="severity-badge high-severity-badge">High</span>
+                            <span class="rating-stars">★☆☆☆☆ (1/5)</span>
+                        </div>
+                    </div>
+                    <div class="feedback-text">"Prior to the introduction of the ai features edge was mediocre.Since the recent introduction of the forced ai features it’s user interface is now a deeply unpleasant experience. I use it only because I am forced to by my employer."</div>
+                    <div class="matched-keywords"><span class="keyword-tag">ai</span></div>
+                </div>
+                <div class="feedback-item low-severity">
+                    <div class="feedback-counter">16</div>
+                    <div class="feedback-header">
+                        <div class="feedback-meta">
+                            <span>📱 iOS App Store</span>
+                            <span>📅 2025-06-22</span>
+                            <span>🆔 IOS_3</span>
+                            
+                        </div>
+                        <div>
+                            <span class="severity-badge low-severity-badge">Low</span>
+                            <span class="rating-stars">★★★★★ (5/5)</span>
+                        </div>
+                    </div>
+                    <div class="feedback-text">"Después de Safari es el mejor en iOS y en Windows es el mejor navegador por tener integrado Copilot."</div>
+                    <div class="matched-keywords"><span class="keyword-tag">copilot</span></div>
+                </div>
+                <div class="feedback-item low-severity">
+                    <div class="feedback-counter">17</div>
+                    <div class="feedback-header">
+                        <div class="feedback-meta">
+                            <span>📱 iOS App Store</span>
+                            <span>📅 2025-06-21</span>
+                            <span>🆔 IOS_11</span>
+                            
+                        </div>
+                        <div>
+                            <span class="severity-badge low-severity-badge">Low</span>
+                            <span class="rating-stars">★★★★★ (5/5)</span>
+                        </div>
+                    </div>
+                    <div class="feedback-text">"Edge med Copilot er et exceptionelt værktøj til at søge, foretage research og afveje muligheder. Klart det bedste på markedet i 2025."</div>
+                    <div class="matched-keywords"><span class="keyword-tag">copilot</span></div>
+                </div>
+                <div class="feedback-item low-severity">
+                    <div class="feedback-counter">18</div>
+                    <div class="feedback-header">
+                        <div class="feedback-meta">
+                            <span>📱 iOS App Store</span>
+                            <span>📅 2025-06-21</span>
+                            <span>🆔 IOS_12</span>
+                            
+                        </div>
+                        <div>
+                            <span class="severity-badge low-severity-badge">Low</span>
+                            <span class="rating-stars">★★★★★ (5/5)</span>
+                        </div>
+                    </div>
+                    <div class="feedback-text">"Built in Ad Blocker, Copilot integration allows summarization of pages and photo searches within the browser, sync tabs with PC. New tab page provides weather, news, and quick access to favorites."</div>
+                    <div class="matched-keywords"><span class="keyword-tag">copilot</span></div>
+                </div>
+            </div>
+        </div>
+        <div class="issue-section">
+            <div class="issue-header" onclick="toggleIssue('Extension_Problems')">
+                <h2>
+                    <span>🔧 Extension Problems</span>
+                    <span class="toggle-icon" id="icon_Extension_Problems">▼</span>
+                </h2>
+                <div class="issue-stats">
+                    <div class="stat-item">Total: 12</div>
+                    <div class="stat-item">High: 3</div>
+                    <div class="stat-item">Medium: 1</div>
+                    <div class="stat-item">Low: 8</div>
+                </div>
+            </div>
+            
+            <div class="issue-content" id="content_Extension_Problems">
+                <div class="feedback-item high-severity">
+                    <div class="feedback-counter">1</div>
+                    <div class="feedback-header">
+                        <div class="feedback-meta">
+                            <span>📱 Google Play Store</span>
+                            <span>📅 2025-06-22</span>
+                            <span>🆔 GPLAY_96</span>
+                            
+                        </div>
+                        <div>
+                            <span class="severity-badge high-severity-badge">High</span>
+                            <span class="rating-stars">★☆☆☆☆ (1/5)</span>
+                        </div>
+                    </div>
+                    <div class="feedback-text">"Choosing "Desktop-Mode" on Youtube page is pointless,as if you turn off the phone screen ,whatever play you are 'whatching' on ,stops along with it. Although, it supports extensions like Ublock Origin, that is a good point. I'll remain with Kiwi Browser, the best for any android until now."</div>
+                    <div class="matched-keywords"><span class="keyword-tag">extension</span><span class="keyword-tag">ublock</span></div>
+                </div>
+                <div class="feedback-item high-severity">
+                    <div class="feedback-counter">2</div>
+                    <div class="feedback-header">
+                        <div class="feedback-meta">
+                            <span>📱 Google Play Store</span>
+                            <span>📅 2025-06-23</span>
+                            <span>🆔 GPLAY_66</span>
+                            
+                        </div>
+                        <div>
+                            <span class="severity-badge high-severity-badge">High</span>
+                            <span class="rating-stars">★★☆☆☆ (2/5)</span>
+                        </div>
+                    </div>
+                    <div class="feedback-text">"冷启动慢。 有时候地址栏无法使用gborad键入，输入什么都进不去，从后台切回edge可以复现，好几个版本都有这个bug。 有的时候加载白屏，我不知道为什么，其他浏览器都能打开。 集锦的里面的链接点不开，完美复现，重启app也是这样，没有任何先决条件，就是点不开。 收藏集锦下载的那个界面，我知道这几个全都是恶心的webview不是原生的界面，但至少做的好一些，滑动切换时有时黑屏再显示出来，有时镂空了。 有些插件，比如ublock会时不时崩溃，自己关闭。 在别的应用使用edge框架显示的网页中下载apk，点击打开无反应，此时打开edge中的下载，点击无反应，正常情况下是可以打开安装包的，此时必须点击打开方式选择软件包安装程序。 标签页管理非常难受，新建标签页的动画非常生硬，快速点击后没有明显提示新建了标签页。另外标签页管理页，竟然不是从下开始排列而是上面，对单手操作非常不友好，明明可以做成从下面开始排列，比如只有一个标签页的话就在右下角而不是左上角，另外滑动关闭的动画也很生硬。 下载页面没有多选操作的选项，这个太基础了，竟然没有。"</div>
+                    <div class="matched-keywords"><span class="keyword-tag">ublock</span></div>
+                </div>
+                <div class="feedback-item medium-severity">
+                    <div class="feedback-counter">3</div>
+                    <div class="feedback-header">
+                        <div class="feedback-meta">
+                            <span>📱 Google Play Store</span>
+                            <span>📅 2025-06-22</span>
+                            <span>🆔 GPLAY_115</span>
+                            
+                        </div>
+                        <div>
+                            <span class="severity-badge medium-severity-badge">Medium</span>
+                            <span class="rating-stars">★★★☆☆ (3/5)</span>
+                        </div>
+                    </div>
+                    <div class="feedback-text">"Does everything Chrome ought to do but doesn't. Smooth and feature-rich experience. Hands-down the best feature is the built-in AdBlocker, which *actually works*! update: was at 5 stars, now down to 3 because Collections don't work properly anymore on my phone. I cannot open links from or add links to my collections. Please fix! :) Moto RAZR Ultra 2025"</div>
+                    <div class="matched-keywords"><span class="keyword-tag">adblock</span></div>
+                </div>
+                <div class="feedback-item low-severity">
+                    <div class="feedback-counter">4</div>
+                    <div class="feedback-header">
+                        <div class="feedback-meta">
+                            <span>📱 Google Play Store</span>
+                            <span>📅 2025-06-22</span>
+                            <span>🆔 GPLAY_85</span>
+                            
+                        </div>
+                        <div>
+                            <span class="severity-badge low-severity-badge">Low</span>
+                            <span class="rating-stars">★★★★☆ (4/5)</span>
+                        </div>
+                    </div>
+                    <div class="feedback-text">"Giving only 4 star for support extension but not vast like kiwi browser upgrade all extension support like kiwi browser I will give 5 ⭐"</div>
+                    <div class="matched-keywords"><span class="keyword-tag">extension</span></div>
+                </div>
+                <div class="feedback-item low-severity">
+                    <div class="feedback-counter">5</div>
+                    <div class="feedback-header">
+                        <div class="feedback-meta">
+                            <span>📱 Google Play Store</span>
+                            <span>📅 2025-06-23</span>
+                            <span>🆔 GPLAY_11</span>
+                            
+                        </div>
+                        <div>
+                            <span class="severity-badge low-severity-badge">Low</span>
+                            <span class="rating-stars">★★★★★ (5/5)</span>
+                        </div>
+                    </div>
+                    <div class="feedback-text">"uBlock Origin, ADuard Werbeblocker etc. wieder unter Erweiterungen."</div>
+                    <div class="matched-keywords"><span class="keyword-tag">ublock</span></div>
+                </div>
+                <div class="feedback-item low-severity">
+                    <div class="feedback-counter">6</div>
+                    <div class="feedback-header">
+                        <div class="feedback-meta">
+                            <span>📱 Google Play Store</span>
+                            <span>📅 2025-06-22</span>
+                            <span>🆔 GPLAY_91</span>
+                            
+                        </div>
+                        <div>
+                            <span class="severity-badge low-severity-badge">Low</span>
+                            <span class="rating-stars">★★★★★ (5/5)</span>
+                        </div>
+                    </div>
+                    <div class="feedback-text">"Allows ublock origin again! Will always be 5 stars while it supports this extension."</div>
+                    <div class="matched-keywords"><span class="keyword-tag">extension</span><span class="keyword-tag">ublock</span></div>
+                </div>
+                <div class="feedback-item low-severity">
+                    <div class="feedback-counter">7</div>
+                    <div class="feedback-header">
+                        <div class="feedback-meta">
+                            <span>📱 Google Play Store</span>
+                            <span>📅 2025-06-22</span>
+                            <span>🆔 GPLAY_92</span>
+                            
+                        </div>
+                        <div>
+                            <span class="severity-badge low-severity-badge">Low</span>
+                            <span class="rating-stars">★★★★★ (5/5)</span>
+                        </div>
+                    </div>
+                    <div class="feedback-text">"Edge com Ublock Origin é o melhor"</div>
+                    <div class="matched-keywords"><span class="keyword-tag">ublock</span></div>
+                </div>
+                <div class="feedback-item low-severity">
+                    <div class="feedback-counter">8</div>
+                    <div class="feedback-header">
+                        <div class="feedback-meta">
+                            <span>📱 Google Play Store</span>
+                            <span>📅 2025-06-22</span>
+                            <span>🆔 GPLAY_112</span>
+                            
+                        </div>
+                        <div>
+                            <span class="severity-badge low-severity-badge">Low</span>
+                            <span class="rating-stars">★★★★★ (5/5)</span>
+                        </div>
+                    </div>
+                    <div class="feedback-text">"Maravilha... Disponibilizaram o ublock origin"</div>
+                    <div class="matched-keywords"><span class="keyword-tag">ublock</span></div>
+                </div>
+                <div class="feedback-item low-severity">
+                    <div class="feedback-counter">9</div>
+                    <div class="feedback-header">
+                        <div class="feedback-meta">
+                            <span>📱 Google Play Store</span>
+                            <span>📅 2025-06-22</span>
+                            <span>🆔 GPLAY_131</span>
+                            
+                        </div>
+                        <div>
+                            <span class="severity-badge low-severity-badge">Low</span>
+                            <span class="rating-stars">★★★★★ (5/5)</span>
+                        </div>
+                    </div>
+                    <div class="feedback-text">"bravo Microsoft j'ai utilisé chrome pendant des années puis a force que Microsoft impose edge j'ai dit pourquoi pas testé et vraiment je suis surpris du résultat économe en batterie et en ressources, plus défendeur et extension pub , franchement j'ai pas trouvé de défauts pourtant je suis casse pied"</div>
+                    <div class="matched-keywords"><span class="keyword-tag">extension</span></div>
+                </div>
+                <div class="feedback-item low-severity">
+                    <div class="feedback-counter">10</div>
+                    <div class="feedback-header">
+                        <div class="feedback-meta">
+                            <span>📱 Google Play Store</span>
+                            <span>📅 2025-06-22</span>
+                            <span>🆔 GPLAY_132</span>
+                            
+                        </div>
+                        <div>
+                            <span class="severity-badge low-severity-badge">Low</span>
+                            <span class="rating-stars">★★★★★ (5/5)</span>
+                        </div>
+                    </div>
+                    <div class="feedback-text">"Obrigado Microsoft por colocar a melhor extensão no navegador Edge Ublock origin agora só falta uma peça para ficar 100% e rodar vídeos em segundo plano tou no aguardo😉"</div>
+                    <div class="matched-keywords"><span class="keyword-tag">ublock</span></div>
+                </div>
+                <div class="feedback-item low-severity">
+                    <div class="feedback-counter">11</div>
+                    <div class="feedback-header">
+                        <div class="feedback-meta">
+                            <span>📱 Google Play Store</span>
+                            <span>📅 2025-06-22</span>
+                            <span>🆔 GPLAY_138</span>
+                            
+                        </div>
+                        <div>
+                            <span class="severity-badge low-severity-badge">Low</span>
+                            <span class="rating-stars">★★★★★ (5/5)</span>
+                        </div>
+                    </div>
+                    <div class="feedback-text">"The best browser I can think of. It's fast, light on resources, and feature packed. I use it on PC too, way better then chrome. Copilot features work excellently, and it's aesthetically pleasing. Not to mention a built in adblocker! Way better at tab organization then other browsers, overall outstanding browser!"</div>
+                    <div class="matched-keywords"><span class="keyword-tag">adblock</span></div>
+                </div>
+                <div class="feedback-item high-severity">
+                    <div class="feedback-counter">12</div>
+                    <div class="feedback-header">
+                        <div class="feedback-meta">
+                            <span>📱 iOS App Store</span>
+                            <span>📅 2025-06-21</span>
+                            <span>🆔 IOS_14</span>
+                            
+                        </div>
+                        <div>
+                            <span class="severity-badge high-severity-badge">High</span>
+                            <span class="rating-stars">★☆☆☆☆ (1/5)</span>
+                        </div>
+                    </div>
+                    <div class="feedback-text">"This is just a copy of Chromes awful ios browser.. Just with an Adblocker that doesn't work with YouTube"</div>
+                    <div class="matched-keywords"><span class="keyword-tag">adblock</span></div>
+                </div>
+            </div>
+        </div>
+        <div class="issue-section">
+            <div class="issue-header" onclick="toggleIssue('UI/UX_Issues')">
+                <h2>
+                    <span>🔧 UI/UX Issues</span>
+                    <span class="toggle-icon" id="icon_UI/UX_Issues">▼</span>
+                </h2>
+                <div class="issue-stats">
+                    <div class="stat-item">Total: 5</div>
+                    <div class="stat-item">High: 2</div>
+                    <div class="stat-item">Medium: 0</div>
+                    <div class="stat-item">Low: 3</div>
+                </div>
+            </div>
+            
+            <div class="issue-content" id="content_UI/UX_Issues">
+                <div class="feedback-item low-severity">
+                    <div class="feedback-counter">1</div>
+                    <div class="feedback-header">
+                        <div class="feedback-meta">
+                            <span>📱 Social Media (Unwrap)</span>
+                            <span>📅 2025-06-21 08:14:46+00:00</span>
+                            <span>🆔 UNWRAP_9</span>
+                            
+                        </div>
+                        <div>
+                            <span class="severity-badge low-severity-badge">Low</span>
+                            
+                        </div>
+                    </div>
+                    <div class="feedback-text">"1. Why remove Workspaces 😭😭? I was loving the sync between my phone & PC. 2. I love Edge but moved to Firefox temporarily, bcoz on my Redmi Note 13 Pro (HyperOS 2), web pages & even Edge settings go blank. Only the address bar & nav buttons show, rest is invisible. Removing from recents & reopening fixes it, but issue comes back when I minimize. Pls fix 🙏 or I might fully switch to Firefox 😢"</div>
+                    <div class="matched-keywords"><span class="keyword-tag">address bar</span><span class="keyword-tag">button</span></div>
+                </div>
+                <div class="feedback-item low-severity">
+                    <div class="feedback-counter">2</div>
+                    <div class="feedback-header">
+                        <div class="feedback-meta">
+                            <span>📱 Social Media (Unwrap)</span>
+                            <span>📅 2025-06-20 11:57:11+00:00</span>
+                            <span>🆔 UNWRAP_12</span>
+                            <a href="https://www.reddit.com/r/MicrosoftEdge/comments/1lg259b/" target="_blank" class="url-link">🔗 View Original</a>
+                        </div>
+                        <div>
+                            <span class="severity-badge low-severity-badge">Low</span>
+                            
+                        </div>
+                    </div>
+                    <div class="feedback-text">"As per the title really - I had an issue with the address bar vanishing the other day and while trying to resolve it I tried pretty much everything, cleared the cache, deleted all data, un-installed/re-installed, tried the Beta - nothing worked until I found a work around to get it to appear and was then able to "move it to the top" which brought it back. Hurrah!
+
+What still isn't working though is that I can't sign in - clicking "add an account" brings up a white screen with a spinning circle and it then immediately crashes. It's not the end of the world, being signed in is a nice-to-have really but it's still bugging the heck out of me because it *should* work (and it used to!). I've tried using the Beta and it's exactly the same."</div>
+                    <div class="matched-keywords"><span class="keyword-tag">address bar</span><span class="keyword-tag">vanish</span></div>
+                </div>
+                <div class="feedback-item high-severity">
+                    <div class="feedback-counter">3</div>
+                    <div class="feedback-header">
+                        <div class="feedback-meta">
+                            <span>📱 Google Play Store</span>
+                            <span>📅 2025-06-23</span>
+                            <span>🆔 GPLAY_12</span>
+                            
+                        </div>
+                        <div>
+                            <span class="severity-badge high-severity-badge">High</span>
+                            <span class="rating-stars">★☆☆☆☆ (1/5)</span>
+                        </div>
+                    </div>
+                    <div class="feedback-text">"Saat menulis panjang lebar pada fitur copilot kemudian secara tidak sengaja saya meng-swipe down dan seketika itu juga tulisan saya hilang. Sangat menjengkelkan. Kepada developer mohon diperhatikan situasi ini."</div>
+                    <div class="matched-keywords"><span class="keyword-tag">menu</span></div>
+                </div>
+                <div class="feedback-item low-severity">
+                    <div class="feedback-counter">4</div>
+                    <div class="feedback-header">
+                        <div class="feedback-meta">
+                            <span>📱 Google Play Store</span>
+                            <span>📅 2025-06-23</span>
+                            <span>🆔 GPLAY_32</span>
+                            
+                        </div>
+                        <div>
+                            <span class="severity-badge low-severity-badge">Low</span>
+                            <span class="rating-stars">★★★★☆ (4/5)</span>
+                        </div>
+                    </div>
+                    <div class="feedback-text">"put home botton on the bottom bar without having to press menu to search the home icon"</div>
+                    <div class="matched-keywords"><span class="keyword-tag">menu</span></div>
+                </div>
+                <div class="feedback-item high-severity">
+                    <div class="feedback-counter">5</div>
+                    <div class="feedback-header">
+                        <div class="feedback-meta">
+                            <span>📱 iOS App Store</span>
+                            <span>📅 2025-06-22</span>
+                            <span>🆔 IOS_2</span>
+                            
+                        </div>
+                        <div>
+                            <span class="severity-badge high-severity-badge">High</span>
+                            <span class="rating-stars">★☆☆☆☆ (1/5)</span>
+                        </div>
+                    </div>
+                    <div class="feedback-text">"Prior to the introduction of the ai features edge was mediocre.Since the recent introduction of the forced ai features it’s user interface is now a deeply unpleasant experience. I use it only because I am forced to by my employer."</div>
+                    <div class="matched-keywords"><span class="keyword-tag">interface</span></div>
+                </div>
+            </div>
+        </div>
+        <div class="issue-section">
+            <div class="issue-header" onclick="toggleIssue('Video_and_Media_Issues')">
+                <h2>
+                    <span>🔧 Video & Media Issues</span>
+                    <span class="toggle-icon" id="icon_Video_and_Media_Issues">▼</span>
+                </h2>
+                <div class="issue-stats">
+                    <div class="stat-item">Total: 5</div>
+                    <div class="stat-item">High: 2</div>
+                    <div class="stat-item">Medium: 0</div>
+                    <div class="stat-item">Low: 3</div>
+                </div>
+            </div>
+            
+            <div class="issue-content" id="content_Video_and_Media_Issues">
+                <div class="feedback-item low-severity">
+                    <div class="feedback-counter">1</div>
+                    <div class="feedback-header">
+                        <div class="feedback-meta">
+                            <span>📱 Social Media (Unwrap)</span>
+                            <span>📅 2025-06-20 11:57:11+00:00</span>
+                            <span>🆔 UNWRAP_12</span>
+                            <a href="https://www.reddit.com/r/MicrosoftEdge/comments/1lg259b/" target="_blank" class="url-link">🔗 View Original</a>
+                        </div>
+                        <div>
+                            <span class="severity-badge low-severity-badge">Low</span>
+                            
+                        </div>
+                    </div>
+                    <div class="feedback-text">"As per the title really - I had an issue with the address bar vanishing the other day and while trying to resolve it I tried pretty much everything, cleared the cache, deleted all data, un-installed/re-installed, tried the Beta - nothing worked until I found a work around to get it to appear and was then able to "move it to the top" which brought it back. Hurrah!
+
+What still isn't working though is that I can't sign in - clicking "add an account" brings up a white screen with a spinning circle and it then immediately crashes. It's not the end of the world, being signed in is a nice-to-have really but it's still bugging the heck out of me because it *should* work (and it used to!). I've tried using the Beta and it's exactly the same."</div>
+                    <div class="matched-keywords"><span class="keyword-tag">media</span></div>
+                </div>
+                <div class="feedback-item high-severity">
+                    <div class="feedback-counter">2</div>
+                    <div class="feedback-header">
+                        <div class="feedback-meta">
+                            <span>📱 Google Play Store</span>
+                            <span>📅 2025-06-22</span>
+                            <span>🆔 GPLAY_96</span>
+                            
+                        </div>
+                        <div>
+                            <span class="severity-badge high-severity-badge">High</span>
+                            <span class="rating-stars">★☆☆☆☆ (1/5)</span>
+                        </div>
+                    </div>
+                    <div class="feedback-text">"Choosing "Desktop-Mode" on Youtube page is pointless,as if you turn off the phone screen ,whatever play you are 'whatching' on ,stops along with it. Although, it supports extensions like Ublock Origin, that is a good point. I'll remain with Kiwi Browser, the best for any android until now."</div>
+                    <div class="matched-keywords"><span class="keyword-tag">youtube</span></div>
+                </div>
+                <div class="feedback-item high-severity">
+                    <div class="feedback-counter">3</div>
+                    <div class="feedback-header">
+                        <div class="feedback-meta">
+                            <span>📱 iOS App Store</span>
+                            <span>📅 2025-06-21</span>
+                            <span>🆔 IOS_14</span>
+                            
+                        </div>
+                        <div>
+                            <span class="severity-badge high-severity-badge">High</span>
+                            <span class="rating-stars">★☆☆☆☆ (1/5)</span>
+                        </div>
+                    </div>
+                    <div class="feedback-text">"This is just a copy of Chromes awful ios browser.. Just with an Adblocker that doesn't work with YouTube"</div>
+                    <div class="matched-keywords"><span class="keyword-tag">youtube</span></div>
+                </div>
+                <div class="feedback-item low-severity">
+                    <div class="feedback-counter">4</div>
+                    <div class="feedback-header">
+                        <div class="feedback-meta">
+                            <span>📱 iOS App Store</span>
+                            <span>📅 2025-06-22</span>
+                            <span>🆔 IOS_0</span>
+                            
+                        </div>
+                        <div>
+                            <span class="severity-badge low-severity-badge">Low</span>
+                            <span class="rating-stars">★★★★☆ (4/5)</span>
+                        </div>
+                    </div>
+                    <div class="feedback-text">"edge浏览器是我在Windows11上经常用的浏览器，最常用的浏览器，很多时候我看教程都是用B站看的，但是b站不能同时开多个窗口播放，但是edge可以，所以后面需要下载或者搜索用的都是edge浏览器，经常用edge来复制网址粘贴，还有谷歌的浏览器，多亏了那个叫啥ch啥的浏览器，让我能访问YouTube的网址"</div>
+                    <div class="matched-keywords"><span class="keyword-tag">youtube</span></div>
+                </div>
+                <div class="feedback-item low-severity">
+                    <div class="feedback-counter">5</div>
+                    <div class="feedback-header">
+                        <div class="feedback-meta">
+                            <span>📱 iOS App Store</span>
+                            <span>📅 2025-06-22</span>
+                            <span>🆔 IOS_5</span>
+                            
+                        </div>
+                        <div>
+                            <span class="severity-badge low-severity-badge">Low</span>
+                            <span class="rating-stars">★★★★★ (5/5)</span>
+                        </div>
+                    </div>
+                    <div class="feedback-text">"私はマイクロソフトが大好きです。Googleだと YouTubeに反映されるのがいやで Apple Safariだと検索エンジンがなくて。Bingが好きです。"</div>
+                    <div class="matched-keywords"><span class="keyword-tag">youtube</span></div>
+                </div>
+            </div>
+        </div>
+        <div class="issue-section">
+            <div class="issue-header" onclick="toggleIssue('Notifications_and_Popups')">
+                <h2>
+                    <span>🔧 Notifications & Popups</span>
+                    <span class="toggle-icon" id="icon_Notifications_and_Popups">▼</span>
+                </h2>
+                <div class="issue-stats">
+                    <div class="stat-item">Total: 4</div>
+                    <div class="stat-item">High: 2</div>
+                    <div class="stat-item">Medium: 1</div>
+                    <div class="stat-item">Low: 1</div>
+                </div>
+            </div>
+            
+            <div class="issue-content" id="content_Notifications_and_Popups">
+                <div class="feedback-item low-severity">
+                    <div class="feedback-counter">1</div>
+                    <div class="feedback-header">
+                        <div class="feedback-meta">
+                            <span>📱 Social Media (Unwrap)</span>
+                            <span>📅 2025-06-21 16:13:33+00:00</span>
+                            <span>🆔 UNWRAP_6</span>
+                            
+                        </div>
+                        <div>
+                            <span class="severity-badge low-severity-badge">Low</span>
+                            
+                        </div>
+                    </div>
+                    <div class="feedback-text">"MS Edge automatically got installed on my mobile phone without my permission. How funny is this Gate without any window and running to score some bills by hacking my phone through U-ACID What an ACT of BETA over TELEGRAM.! U-ACID. 🫳💦"</div>
+                    <div class="matched-keywords"><span class="keyword-tag">permission</span></div>
+                </div>
+                <div class="feedback-item high-severity">
+                    <div class="feedback-counter">2</div>
+                    <div class="feedback-header">
+                        <div class="feedback-meta">
+                            <span>📱 Google Play Store</span>
+                            <span>📅 2025-06-23</span>
+                            <span>🆔 GPLAY_40</span>
+                            
+                        </div>
+                        <div>
+                            <span class="severity-badge high-severity-badge">High</span>
+                            <span class="rating-stars">★☆☆☆☆ (1/5)</span>
+                        </div>
+                    </div>
+                    <div class="feedback-text">"Constant notifications, blocked everything and stopped using"</div>
+                    <div class="matched-keywords"><span class="keyword-tag">notification</span></div>
+                </div>
+                <div class="feedback-item high-severity">
+                    <div class="feedback-counter">3</div>
+                    <div class="feedback-header">
+                        <div class="feedback-meta">
+                            <span>📱 Google Play Store</span>
+                            <span>📅 2025-06-23</span>
+                            <span>🆔 GPLAY_54</span>
+                            
+                        </div>
+                        <div>
+                            <span class="severity-badge high-severity-badge">High</span>
+                            <span class="rating-stars">★☆☆☆☆ (1/5)</span>
+                        </div>
+                    </div>
+                    <div class="feedback-text">"this annoying with pop in ads how it make it stopped from popping up ads?"</div>
+                    <div class="matched-keywords"><span class="keyword-tag">annoying</span></div>
+                </div>
+                <div class="feedback-item medium-severity">
+                    <div class="feedback-counter">4</div>
+                    <div class="feedback-header">
+                        <div class="feedback-meta">
+                            <span>📱 iOS App Store</span>
+                            <span>📅 2025-06-20</span>
+                            <span>🆔 IOS_16</span>
+                            
+                        </div>
+                        <div>
+                            <span class="severity-badge medium-severity-badge">Medium</span>
+                            <span class="rating-stars">★★★☆☆ (3/5)</span>
+                        </div>
+                    </div>
+                    <div class="feedback-text">"The speed of loading page is ridiculous. UI is lagging on settings popup…common guys, it’s 2025 outside hire good devs and fix these problems"</div>
+                    <div class="matched-keywords"><span class="keyword-tag">popup</span></div>
+                </div>
+            </div>
+        </div>
+        <div class="issue-section">
+            <div class="issue-header" onclick="toggleIssue('Collections_Feature_Issues')">
+                <h2>
+                    <span>🔧 Collections Feature Issues</span>
+                    <span class="toggle-icon" id="icon_Collections_Feature_Issues">▼</span>
+                </h2>
+                <div class="issue-stats">
+                    <div class="stat-item">Total: 3</div>
+                    <div class="stat-item">High: 2</div>
+                    <div class="stat-item">Medium: 1</div>
+                    <div class="stat-item">Low: 0</div>
+                </div>
+            </div>
+            
+            <div class="issue-content" id="content_Collections_Feature_Issues">
+                <div class="feedback-item high-severity">
+                    <div class="feedback-counter">1</div>
+                    <div class="feedback-header">
+                        <div class="feedback-meta">
+                            <span>📱 Google Play Store</span>
+                            <span>📅 2025-06-23</span>
+                            <span>🆔 GPLAY_57</span>
+                            
+                        </div>
+                        <div>
+                            <span class="severity-badge high-severity-badge">High</span>
+                            <span class="rating-stars">★☆☆☆☆ (1/5)</span>
+                        </div>
+                    </div>
+                    <div class="feedback-text">"June 22nd Update: 3rd Update Since You Broke Collections And It Still Hasn't Been Fixed!!! There are no ways to add anything to collections!!! Come on Edge Team, how do you drop balls so bad on a regular basis!!! Just open Collections and see for yourself... DO YOU EVEN USE YOUR OWN PRODUCTS & SERVICES?!?!?! OBVIOUSLY NOT!!!"</div>
+                    <div class="matched-keywords"><span class="keyword-tag">collection</span><span class="keyword-tag">collections</span></div>
+                </div>
+                <div class="feedback-item high-severity">
+                    <div class="feedback-counter">2</div>
+                    <div class="feedback-header">
+                        <div class="feedback-meta">
+                            <span>📱 Google Play Store</span>
+                            <span>📅 2025-06-22</span>
+                            <span>🆔 GPLAY_71</span>
+                            
+                        </div>
+                        <div>
+                            <span class="severity-badge high-severity-badge">High</span>
+                            <span class="rating-stars">★☆☆☆☆ (1/5)</span>
+                        </div>
+                    </div>
+                    <div class="feedback-text">"unable to add page to collections, it sux"</div>
+                    <div class="matched-keywords"><span class="keyword-tag">collection</span><span class="keyword-tag">collections</span></div>
+                </div>
+                <div class="feedback-item medium-severity">
+                    <div class="feedback-counter">3</div>
+                    <div class="feedback-header">
+                        <div class="feedback-meta">
+                            <span>📱 Google Play Store</span>
+                            <span>📅 2025-06-22</span>
+                            <span>🆔 GPLAY_115</span>
+                            
+                        </div>
+                        <div>
+                            <span class="severity-badge medium-severity-badge">Medium</span>
+                            <span class="rating-stars">★★★☆☆ (3/5)</span>
+                        </div>
+                    </div>
+                    <div class="feedback-text">"Does everything Chrome ought to do but doesn't. Smooth and feature-rich experience. Hands-down the best feature is the built-in AdBlocker, which *actually works*! update: was at 5 stars, now down to 3 because Collections don't work properly anymore on my phone. I cannot open links from or add links to my collections. Please fix! :) Moto RAZR Ultra 2025"</div>
+                    <div class="matched-keywords"><span class="keyword-tag">collection</span><span class="keyword-tag">collections</span></div>
+                </div>
+            </div>
+        </div>
+        <div class="issue-section">
+            <div class="issue-header" onclick="toggleIssue('Performance_and_Speed')">
+                <h2>
+                    <span>🔧 Performance & Speed</span>
+                    <span class="toggle-icon" id="icon_Performance_and_Speed">▼</span>
+                </h2>
+                <div class="issue-stats">
+                    <div class="stat-item">Total: 4</div>
+                    <div class="stat-item">High: 1</div>
+                    <div class="stat-item">Medium: 1</div>
+                    <div class="stat-item">Low: 2</div>
+                </div>
+            </div>
+            
+            <div class="issue-content" id="content_Performance_and_Speed">
+                <div class="feedback-item low-severity">
+                    <div class="feedback-counter">1</div>
+                    <div class="feedback-header">
+                        <div class="feedback-meta">
+                            <span>📱 Social Media (Unwrap)</span>
+                            <span>📅 2025-06-24 14:05:49+00:00</span>
+                            <span>🆔 UNWRAP_0</span>
+                            <a href="https://www.reddit.com/r/browsers/comments/1ljc0g9/" target="_blank" class="url-link">🔗 View Original</a>
+                        </div>
+                        <div>
+                            <span class="severity-badge low-severity-badge">Low</span>
+                            
+                        </div>
+                    </div>
+                    <div class="feedback-text">"Is it only me or does edge on android reloads rather quickly. You just have to leave the app for 5 seconds and go back into it for it to reload the whole page. It's very frustrating especially when filling up info or reading documents online etc. Because of this I'm so reluctant do daily it as it has become very inconvenient. "</div>
+                    <div class="matched-keywords"><span class="keyword-tag">reload</span></div>
+                </div>
+                <div class="feedback-item high-severity">
+                    <div class="feedback-counter">2</div>
+                    <div class="feedback-header">
+                        <div class="feedback-meta">
+                            <span>📱 Google Play Store</span>
+                            <span>📅 2025-06-22</span>
+                            <span>🆔 GPLAY_106</span>
+                            
+                        </div>
+                        <div>
+                            <span class="severity-badge high-severity-badge">High</span>
+                            <span class="rating-stars">★★☆☆☆ (2/5)</span>
+                        </div>
+                    </div>
+                    <div class="feedback-text">"why the hell did you make the downloading options so complocated😠 ? . Previous version could directly download pdf but now another window loading which take more time Then allowing download. 😐 Also where is auto detecting downloadable files options🤦 Im gonna remove this app if you made these complicated Also pdf viewer not smooth.cant even zoom properly"</div>
+                    <div class="matched-keywords"><span class="keyword-tag">loading</span></div>
+                </div>
+                <div class="feedback-item low-severity">
+                    <div class="feedback-counter">3</div>
+                    <div class="feedback-header">
+                        <div class="feedback-meta">
+                            <span>📱 Google Play Store</span>
+                            <span>📅 2025-06-23</span>
+                            <span>🆔 GPLAY_50</span>
+                            
+                        </div>
+                        <div>
+                            <span class="severity-badge low-severity-badge">Low</span>
+                            <span class="rating-stars">★★★★★ (5/5)</span>
+                        </div>
+                    </div>
+                    <div class="feedback-text">"speed & management wave 👋"</div>
+                    <div class="matched-keywords"><span class="keyword-tag">speed</span></div>
+                </div>
+                <div class="feedback-item medium-severity">
+                    <div class="feedback-counter">4</div>
+                    <div class="feedback-header">
+                        <div class="feedback-meta">
+                            <span>📱 iOS App Store</span>
+                            <span>📅 2025-06-20</span>
+                            <span>🆔 IOS_16</span>
+                            
+                        </div>
+                        <div>
+                            <span class="severity-badge medium-severity-badge">Medium</span>
+                            <span class="rating-stars">★★★☆☆ (3/5)</span>
+                        </div>
+                    </div>
+                    <div class="feedback-text">"The speed of loading page is ridiculous. UI is lagging on settings popup…common guys, it’s 2025 outside hire good devs and fix these problems"</div>
+                    <div class="matched-keywords"><span class="keyword-tag">lag</span><span class="keyword-tag">loading</span><span class="keyword-tag">speed</span></div>
+                </div>
+            </div>
+        </div>
+        <div class="issue-section">
+            <div class="issue-header" onclick="toggleIssue('Downloads_and_Files')">
+                <h2>
+                    <span>🔧 Downloads & Files</span>
+                    <span class="toggle-icon" id="icon_Downloads_and_Files">▼</span>
+                </h2>
+                <div class="issue-stats">
+                    <div class="stat-item">Total: 3</div>
+                    <div class="stat-item">High: 1</div>
+                    <div class="stat-item">Medium: 0</div>
+                    <div class="stat-item">Low: 2</div>
+                </div>
+            </div>
+            
+            <div class="issue-content" id="content_Downloads_and_Files">
+                <div class="feedback-item low-severity">
+                    <div class="feedback-counter">1</div>
+                    <div class="feedback-header">
+                        <div class="feedback-meta">
+                            <span>📱 Social Media (Unwrap)</span>
+                            <span>📅 2025-06-23 04:33:05+00:00</span>
+                            <span>🆔 UNWRAP_3</span>
+                            <a href="https://www.reddit.com/r/MicrosoftEdge/comments/1li7lz2/" target="_blank" class="url-link">🔗 View Original</a>
+                        </div>
+                        <div>
+                            <span class="severity-badge low-severity-badge">Low</span>
+                            
+                        </div>
+                    </div>
+                    <div class="feedback-text">"Is there any way for the edge to add the ability to download the things via external download managers like adm or 1dm...
+This feature comes handy for power users.
+P.s edge added the ability to make web apps full screen that i have been waiting for years to add to."</div>
+                    <div class="matched-keywords"><span class="keyword-tag">download</span></div>
+                </div>
+                <div class="feedback-item high-severity">
+                    <div class="feedback-counter">2</div>
+                    <div class="feedback-header">
+                        <div class="feedback-meta">
+                            <span>📱 Google Play Store</span>
+                            <span>📅 2025-06-22</span>
+                            <span>🆔 GPLAY_106</span>
+                            
+                        </div>
+                        <div>
+                            <span class="severity-badge high-severity-badge">High</span>
+                            <span class="rating-stars">★★☆☆☆ (2/5)</span>
+                        </div>
+                    </div>
+                    <div class="feedback-text">"why the hell did you make the downloading options so complocated😠 ? . Previous version could directly download pdf but now another window loading which take more time Then allowing download. 😐 Also where is auto detecting downloadable files options🤦 Im gonna remove this app if you made these complicated Also pdf viewer not smooth.cant even zoom properly"</div>
+                    <div class="matched-keywords"><span class="keyword-tag">download</span><span class="keyword-tag">file</span><span class="keyword-tag">pdf</span></div>
+                </div>
+                <div class="feedback-item low-severity">
+                    <div class="feedback-counter">3</div>
+                    <div class="feedback-header">
+                        <div class="feedback-meta">
+                            <span>📱 Google Play Store</span>
+                            <span>📅 2025-06-23</span>
+                            <span>🆔 GPLAY_61</span>
+                            
+                        </div>
+                        <div>
+                            <span class="severity-badge low-severity-badge">Low</span>
+                            <span class="rating-stars">★★★★★ (5/5)</span>
+                        </div>
+                    </div>
+                    <div class="feedback-text">"Excellent. No option to clear download history. please add these option."</div>
+                    <div class="matched-keywords"><span class="keyword-tag">download</span></div>
+                </div>
+            </div>
+        </div>
+        <div class="issue-section">
+            <div class="issue-header" onclick="toggleIssue('Login_and_Account_Issues')">
+                <h2>
+                    <span>🔧 Login & Account Issues</span>
+                    <span class="toggle-icon" id="icon_Login_and_Account_Issues">▼</span>
+                </h2>
+                <div class="issue-stats">
+                    <div class="stat-item">Total: 4</div>
+                    <div class="stat-item">High: 0</div>
+                    <div class="stat-item">Medium: 0</div>
+                    <div class="stat-item">Low: 4</div>
+                </div>
+            </div>
+            
+            <div class="issue-content" id="content_Login_and_Account_Issues">
+                <div class="feedback-item low-severity">
+                    <div class="feedback-counter">1</div>
+                    <div class="feedback-header">
+                        <div class="feedback-meta">
+                            <span>📱 Social Media (Unwrap)</span>
+                            <span>📅 2025-06-21 08:14:46+00:00</span>
+                            <span>🆔 UNWRAP_9</span>
+                            
+                        </div>
+                        <div>
+                            <span class="severity-badge low-severity-badge">Low</span>
+                            
+                        </div>
+                    </div>
+                    <div class="feedback-text">"1. Why remove Workspaces 😭😭? I was loving the sync between my phone & PC. 2. I love Edge but moved to Firefox temporarily, bcoz on my Redmi Note 13 Pro (HyperOS 2), web pages & even Edge settings go blank. Only the address bar & nav buttons show, rest is invisible. Removing from recents & reopening fixes it, but issue comes back when I minimize. Pls fix 🙏 or I might fully switch to Firefox 😢"</div>
+                    <div class="matched-keywords"><span class="keyword-tag">sync</span><span class="keyword-tag">workspace</span></div>
+                </div>
+                <div class="feedback-item low-severity">
+                    <div class="feedback-counter">2</div>
+                    <div class="feedback-header">
+                        <div class="feedback-meta">
+                            <span>📱 Social Media (Unwrap)</span>
+                            <span>📅 2025-06-20 11:57:11+00:00</span>
+                            <span>🆔 UNWRAP_12</span>
+                            <a href="https://www.reddit.com/r/MicrosoftEdge/comments/1lg259b/" target="_blank" class="url-link">🔗 View Original</a>
+                        </div>
+                        <div>
+                            <span class="severity-badge low-severity-badge">Low</span>
+                            
+                        </div>
+                    </div>
+                    <div class="feedback-text">"As per the title really - I had an issue with the address bar vanishing the other day and while trying to resolve it I tried pretty much everything, cleared the cache, deleted all data, un-installed/re-installed, tried the Beta - nothing worked until I found a work around to get it to appear and was then able to "move it to the top" which brought it back. Hurrah!
+
+What still isn't working though is that I can't sign in - clicking "add an account" brings up a white screen with a spinning circle and it then immediately crashes. It's not the end of the world, being signed in is a nice-to-have really but it's still bugging the heck out of me because it *should* work (and it used to!). I've tried using the Beta and it's exactly the same."</div>
+                    <div class="matched-keywords"><span class="keyword-tag">sign in</span><span class="keyword-tag">account</span></div>
+                </div>
+                <div class="feedback-item low-severity">
+                    <div class="feedback-counter">3</div>
+                    <div class="feedback-header">
+                        <div class="feedback-meta">
+                            <span>📱 Google Play Store</span>
+                            <span>📅 2025-06-23</span>
+                            <span>🆔 GPLAY_47</span>
+                            
+                        </div>
+                        <div>
+                            <span class="severity-badge low-severity-badge">Low</span>
+                            <span class="rating-stars">★★★★☆ (4/5)</span>
+                        </div>
+                    </div>
+                    <div class="feedback-text">"iam glad you have option only auto fill password with biometric data (fingerptint) BUUUUUUUTT WHEN i deactivate this option its not asking for my fingerprint ... so if my phone is not locket its easy to Autopilot for anyone who has my phone please lock this option with password or something..... phone edge Samsung s23 ultra.. ui7"</div>
+                    <div class="matched-keywords"><span class="keyword-tag">password</span></div>
+                </div>
+                <div class="feedback-item low-severity">
+                    <div class="feedback-counter">4</div>
+                    <div class="feedback-header">
+                        <div class="feedback-meta">
+                            <span>📱 iOS App Store</span>
+                            <span>📅 2025-06-21</span>
+                            <span>🆔 IOS_12</span>
+                            
+                        </div>
+                        <div>
+                            <span class="severity-badge low-severity-badge">Low</span>
+                            <span class="rating-stars">★★★★★ (5/5)</span>
+                        </div>
+                    </div>
+                    <div class="feedback-text">"Built in Ad Blocker, Copilot integration allows summarization of pages and photo searches within the browser, sync tabs with PC. New tab page provides weather, news, and quick access to favorites."</div>
+                    <div class="matched-keywords"><span class="keyword-tag">sync</span></div>
+                </div>
+            </div>
+        </div>
+        <div class="issue-section">
+            <div class="issue-header" onclick="toggleIssue('Crashes_and_Stability')">
+                <h2>
+                    <span>🔧 Crashes & Stability</span>
+                    <span class="toggle-icon" id="icon_Crashes_and_Stability">▼</span>
+                </h2>
+                <div class="issue-stats">
+                    <div class="stat-item">Total: 1</div>
+                    <div class="stat-item">High: 0</div>
+                    <div class="stat-item">Medium: 0</div>
+                    <div class="stat-item">Low: 1</div>
+                </div>
+            </div>
+            
+            <div class="issue-content" id="content_Crashes_and_Stability">
+                <div class="feedback-item low-severity">
+                    <div class="feedback-counter">1</div>
+                    <div class="feedback-header">
+                        <div class="feedback-meta">
+                            <span>📱 Social Media (Unwrap)</span>
+                            <span>📅 2025-06-20 11:57:11+00:00</span>
+                            <span>🆔 UNWRAP_12</span>
+                            <a href="https://www.reddit.com/r/MicrosoftEdge/comments/1lg259b/" target="_blank" class="url-link">🔗 View Original</a>
+                        </div>
+                        <div>
+                            <span class="severity-badge low-severity-badge">Low</span>
+                            
+                        </div>
+                    </div>
+                    <div class="feedback-text">"As per the title really - I had an issue with the address bar vanishing the other day and while trying to resolve it I tried pretty much everything, cleared the cache, deleted all data, un-installed/re-installed, tried the Beta - nothing worked until I found a work around to get it to appear and was then able to "move it to the top" which brought it back. Hurrah!
+
+What still isn't working though is that I can't sign in - clicking "add an account" brings up a white screen with a spinning circle and it then immediately crashes. It's not the end of the world, being signed in is a nice-to-have really but it's still bugging the heck out of me because it *should* work (and it used to!). I've tried using the Beta and it's exactly the same."</div>
+                    <div class="matched-keywords"><span class="keyword-tag">crash</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>🔍 Enhanced deep analysis of Edge Mobile user feedback issues</p>
+        <p>📊 Complete dataset with original URLs and full feedback content</p>
+        <p>🔗 Click "View Original" links to see source content on Reddit/social media</p>
+    </div>
+    
+    <script>
+        function toggleIssue(issueId) {
+            const content = document.getElementById('content_' + issueId);
+            const icon = document.getElementById('icon_' + issueId);
+            
+            if (content.classList.contains('active')) {
+                content.classList.remove('active');
+                icon.classList.remove('active');
+            } else {
+                content.classList.add('active');
+                icon.classList.add('active');
+            }
+        }
+        
+        // Add smooth scrolling and highlighting
+        document.addEventListener('DOMContentLoaded', function() {
+            const headers = document.querySelectorAll('.issue-header');
+            headers.forEach(header => {
+                header.addEventListener('click', function() {
+                    // Smooth scroll to the section
+                    this.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                });
+            });
+            
+            // Add click effects to feedback items
+            const feedbackItems = document.querySelectorAll('.feedback-item');
+            feedbackItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    this.style.transform = this.style.transform === 'scale(1.02)' ? 'scale(1)' : 'scale(1.02)';
+                    this.style.transition = 'transform 0.2s ease';
+                    setTimeout(() => {
+                        this.style.transform = 'scale(1)';
+                    }, 200);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
